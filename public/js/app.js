@@ -77935,7 +77935,7 @@ var ListFile = function (_Component) {
                     return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',
                         null,
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('object', { width: '100%', height: '500px', data: "file/" + fileId }),
+                        '(to-do) Image Tag src to image preview from first page of pdf',
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                             'h5',
                             { className: 'mt-2' },

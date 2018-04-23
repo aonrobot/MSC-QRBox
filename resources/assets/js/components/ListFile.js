@@ -27,7 +27,7 @@ export default class ListFile extends Component {
             case 'application' :
                 return (
                     <div>
-                        <object width="100%" height="500px" data={"file/" + fileId}></object>
+                        (to-do) Image Tag src to image preview from first page of pdf
                         <h5 className="mt-2">
                             <FontAwesomeIcon className="mr-1" icon={["fas", "file"]}/>
                             Click here to view <span className="badge badge-light">{mimeTypeSub}</span> file.                   
