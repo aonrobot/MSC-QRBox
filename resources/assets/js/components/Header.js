@@ -12,6 +12,16 @@ export default class Header extends Component{
         }
     }
 
+    logout(){
+        Swal('Logout', 'Successful', 'success').then(res => {
+            if(res){
+                location.reload(true);
+            }
+        });
+        axios.get('api/services/logout')
+
+    }
+
     componentDidMount(){
         let login = document.head.querySelector('meta[name="basic-auth"]').content;
         axios.get('api/employee/info/' + login).then(response => {
@@ -41,7 +51,7 @@ export default class Header extends Component{
                     </ul>
                     <div className="mr-3">
                         <button className="btn btn-outline-secondary mr-3" type="button" disabled>Hi, {this.state.userInfo.FullNameEng}</button>
-                        <button className="btn btn-outline-danger" type="button">Logout!!</button>
+                        <button className="btn btn-outline-danger" type="button" onClick={() => this.logout()}>Logout!!</button>
                     </div>
                 </div>
             </nav>

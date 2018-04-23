@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'QRBox'),
 
     /*
     |--------------------------------------------------------------------------
@@ -67,23 +67,20 @@ return [
             'sslmode' => 'prefer',
         ],
 
-        'sqlsrv' => [
+        'QRBox' => [
             'driver' => 'sqlsrv',
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
+            'host' => env('DB_HOST', '172.16.43.202'),
+            'database' => env('DB_DATABASE', 'QRBox'),
+            'username' => env('DB_USERNAME', 'sa'),
+            'password' => env('DB_PASSWORD', 'Leave&Time'),
         ],
 
         'MSCMain' => [
             'driver' => 'sqlsrv',
-            'host' => '172.16.43.202',
-            'database' => 'MSCMain',
-            'username' => 'sa',
-            'password' => 'Leave&Time'
+            'host' => env('DB_HOST', '172.16.43.202'),
+            'database' => env('DB_DATABASE', 'MSCMain'),
+            'username' => env('DB_USERNAME', 'sa'),
+            'password' => env('DB_PASSWORD', 'Leave&Time')
         ]
 
     ],

@@ -11,6 +11,10 @@
 |
 */
 
+Route::prefix('file')->group(function () {
+    Route::get('{id}', 'fileController@show');
+});
+
 Route::view('/{path?}', 'welcome')
      ->where('path', '\b(?!ignoreme|ignoreyou)\b\S+')
      ->name('react');

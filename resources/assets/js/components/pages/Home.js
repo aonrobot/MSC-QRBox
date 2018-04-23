@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import axios from 'axios';
 
 import Util from '../../library/Util';
 
@@ -9,69 +8,73 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import {FilePond, File, registerPlugin } from 'react-filepond';
 import FilePondImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import FilepondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
+import FilepondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+
+import GetQRCodeBtn from '../GetQRCodeBtn';
+import ListFile from '../ListFile';
 
 registerPlugin(FilePondImagePreview);
+registerPlugin(FilepondPluginFileValidateSize);
+registerPlugin(FilepondPluginFileValidateType);
 
 export default class Home extends Component{
     constructor(props) {
         super(props);
 
         this.state = {
+            token: document.head.querySelector('meta[name="csrf-token"]').content,
+            login: document.head.querySelector('meta[name="basic-auth"]').content,
+
             files: [],
             countAddFile: 0,
-            uploadFinished: false,
-            login: document.head.querySelector('meta[name="basic-auth"]').content
+            showListFile: false
         };
+
+        this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
+
+        this.removeFile = this.removeFile.bind(this);
+        this.toggleShowListFile = this.toggleShowListFile.bind(this);
     }
 
-    saveFile(file){
-        let login = this.state.login;
-        let file_detail = {
-            fileExtension : file.fileExtension,
-            fileSize : file.fileSize,
-            fileType : file.fileType,
-            filename : file.filename,
-            filenameWithoutExtension : file.filenameWithoutExtension,
-            id : file.id,
-            serverId : file.serverId
-        }
-        console.log(JSON.stringify(file_detail))
-        axios.post('api/file/store', {login, file : file_detail}).then((response) => {
-            console.log(response);
-            if(response.status === 200){
-                
-            }
-        })
+    componentDidMount() {
+        //this.setState({login: document.head.querySelector('meta[name="basic-auth"]').content});
+        
     }
 
-    removeFile(id, serverId){
-        this.pond._pond.removeFile(id);
+    removeFile(id) {
+        //this.pond._pond.removeFile(id);
         let login = this.state.login;
-        axios.post('api/file/delete', {serverId, login}).then((response) => {
-            console.log(response);
+        axios.post('api/file/delete', {id, login}).then((response) => {
             if(response.status === 200){
                 let files = this.state.files;
                 files = files.filter((el) => (
-                    el.serverId != serverId
+                    el.id != id
                 ))
                 this.setState({files})
             }
+            console.log(this.state.files);            
         })
     }
 
+    toggleShowListFile(checkGenQRCodeBtn = true) {
+        this.setState({countAddFile: 0});
+        this.setState({showListFile: !this.state.showListFile})
+    }
+
     handleInit() {
-        let countProcessFile = 0;
+
         this.pond._pond.on('processfile', (error, file) => {                  
             let files = this.state.files;
-            files.push(file)
+            files.unshift(file)
             this.setState({files})
             //this.pond._pond.removeFile(file.id)
-            this.divShowQRCode.scrollIntoView({ behavior: "smooth", block: "start" });
-
-            console.log(file)
+            //this.divShowQRCode.scrollIntoView({ behavior: "smooth", block: "start" });
+            this.setState({countAddFile: this.state.countAddFile++});
+            console.log(file, this.state.countAddFile)            
         });
         
-        this.pond._pond.on('removefile', (file) => {                       
+        this.pond._pond.on('removefile', (file) => {             
             let files = this.state.files;
             files = files.filter((el) => (
                 el.id != file.id
@@ -90,8 +93,7 @@ export default class Home extends Component{
     }
 
     render(){
-        let token = document.head.querySelector('meta[name="csrf-token"]').content;
-        let label = 'Drag & Drop ไฟล์ของคุณลงตรงพื้นที่สีเทา หรือ <span class="filepond--label-action"> กด Browse ที่นี่ </span>';
+        
         return(
             <div className="d-flex flex-column justify-content-center h-100 mt-5">
                 <div className="d-flex flex-column align-self-center">
@@ -100,78 +102,55 @@ export default class Home extends Component{
                     </div>
                     <div className="links text-center">
                         <p className="mb-5">By <span className="color-w-primary">Metrosystems</span> Cop. PCL.</p>
+
+                        { (this.state.files.length > 0) && !this.state.showListFile ?
+
+                            <GetQRCodeBtn handleClick={this.toggleShowListFile} login={this.state.login} files={this.state.files} countAddFile={this.state.countAddFile}/>
+
+                        : ''}
                         
-                        { !(this.state.uploadFinished) ?
+                        { !this.state.showListFile ?
 
                             <FilePond   allowMultiple={true} 
-                                        maxFiles={3} 
+                                        maxFiles={10}
+                                        maxFileSize={'1024MB'}
+                                        acceptedFileTypes={['image/*', 'video/mp4', 'audio/*', 'application/pdf']}
                                         ref={ref => this.pond = ref}
                                         server={{
                                             url: 'api/uploadBox',
-                                            process: /*this.handleProcessing.                                   bind(this)*/{
+                                            process: {
                                                 headers: {
-                                                    'X-CSRF-TOKEN': token
+                                                    'X-CSRF-TOKEN': this.state.token,
+                                                    'BASIC-AUTH': this.state.login
+                                                }
+                                            },
+                                            revert: {
+                                                headers: {
+                                                    'X-CSRF-TOKEN': this.state.token,
+                                                    'BASIC-AUTH': this.state.login
                                                 }
                                             }
                                         }}
-                                        labelIdle={label}
+                                        labelIdle={this.uploadUIlabel}
                                         instantUpload={true}
                                         onaddfile={(error, file) => this.handleAddFile(error, file)}
                                         oninit={() => this.handleInit()}
-                            >
-                                   
-                            </FilePond>
-
+                            ></FilePond>
 
                         : '' }
 
-                        <button className="btn btn-success mr-3" onClick={() => this.saveFile(file)}>Save</button>                      
+                        { (this.state.files.length > 0) && !this.state.showListFile ?
+
+                            <GetQRCodeBtn handleClick={this.getQRCodeClick} login={this.state.login} files={this.state.files} countAddFile={this.state.countAddFile}/>
+                        
+                        : '' }
 
                     </div>
                 </div>
 
-            { (this.state.files.length > 0) ?
+            { this.state.showListFile ?
 
-                <div className="d-flex flex-column align-self-center mt-5 p-5" ref={ (el) => this.divShowQRCode = el}>
-                    <div className="text-center">
-                        All your file and QR Code                                           
-                    </div>
-                    <table className="table">
-                    <thead className="thead-light">
-                        <tr>
-                            <th scope="col">#ID</th>
-                            <th scope="col">Preview</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Size</th>
-                            <th scope="col">QR Code</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody> 
-                        {
-                            this.state.files.map((file) => (
-                                <tr key={file.id}>
-                                    <td>{file.id}</td>
-                                    <td>
-                                        <a href={"api/services/temp/" + file.serverId.replace("temp/", "")} target="_blank">
-                                            <img src={"api/services/temp/" + file.serverId.replace("temp/", "")} className="w-75 img-thumbnail" />
-                                        </a>
-                                    </td>
-                                    <td>{file.fileExtension}</td>
-                                    <td>{Util.capacityUnit(file.fileSize)}</td>
-                                    <td>
-                                        <img src={'api/services/genqrcode/' + file.serverId.replace("temp/", "")} width="300px"/>
-                                    </td>
-                                    <td>
-                                        <button className="btn btn-danger" onClick={() => this.removeFile(file.id, file.serverId)}>Delete</button>
-                                    </td>
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                    </table>
-                    {/*<button type="button" className="btn btn-primary mt-3 mb-5">Save File</button>*/}
-                </div>
+                <ListFile files={this.state.files} uploadNewFile={true} toggleShowListFile={this.toggleShowListFile} removeFile={this.removeFile}/>
 
             : ''}
 

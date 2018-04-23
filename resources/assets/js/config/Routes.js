@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 //Font
 import fontawesome from '@fortawesome/fontawesome';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import regular from '@fortawesome/fontawesome-free-regular';
 import brands from '@fortawesome/fontawesome-free-brands';
 import solids from '@fortawesome/fontawesome-free-solid';
 
@@ -18,7 +19,7 @@ import Header from '../components/Header';
 import Home from '../components/pages/Home';
 import Files from '../components/pages/Files';
 
-fontawesome.library.add(brands, solids);
+fontawesome.library.add(regular, brands, solids);
 
 const Routes = () => (
     <Router basename={'/qrbox'}>

@@ -12,26 +12,17 @@ use QrCode;
 class servicesController extends Controller
 {
 
-    public function showTempFile($path){
-       /* $path = public_path() . '/' . $path;*/
-        $path = storage_path('app\\temp') . '\\' . $path;
-
-        if(!file_exists($path)){
-            return view('404');
-        }
-        $file = File::get($path);
-        $type = File::mimeType($path);
-        $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
-        return $response;
-    }
-
-    public function genQrCode($url){
+    public function genQrCode($id){
         //$url = $request->input('url');
-        $response = Response::make(QrCode::format('png')->merge('/public/images/msc10.png', .15)->size(500)->generate(env('APP_URL') . 'api/services/showfile/' . $url), 200);
+        $response = Response::make(QrCode::format('png')->merge('/public/images/msc10.png', .15)->size(500)->generate(env('APP_URL') . 'share/' . $id), 200);
         $response->header("Content-Type", "image/png");
         return $response;
     }
+
+    public function logout(){
+        abort(401);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -60,7 +51,7 @@ class servicesController extends Controller
      */
     public function store(Request $request)
     {
-
+        
     }
 
     /**
