@@ -112,6 +112,74 @@ class fileController extends Controller
 
     }
 
+    private function capacityUnit($value, $i = 0){
+        $value = ($value < 1000) ? $value : $value / 1000;
+        if($value >= 1000){
+            return $this->capacityUnit($value, ++$i);
+        } else {
+            $i++;
+            return $value . ['bytes', 'Kb', 'Mb', 'Gb', 'Tb', '', '', ''][$i];
+        }
+    }
+
+    public function listFileTable(Request $request){
+        $columns = ['created_at', 'filename', 'fileSize']; //Name must same in database column name
+
+        $totalData = FileModel::count();
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        //Don't
+        if(empty($request->input('search.value'))){
+            $files = FileModel::skip($start)->take($limit)->orderBy($order, $dir)->get();
+            $totalFilltered = $totalData;
+        }else{
+            $search = $request->input('search.value');
+            $files = FileModel::where('filename', "%{$search}%")
+                                ->orWhere('fileSize', "%{intval($search)}%")
+                                ->skip($start)
+                                ->take($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+            $totalFilltered = FileModel::where('filename', "%{$search}%")
+                                ->orWhere('fileSize', "%{intval($search)}%")
+                                ->count();
+        }
+
+        $data = [];
+
+        if($files){
+            foreach($files as $f){
+                $fileId = strval($f->fileId);
+                $data[] = [
+                    "<input type='checkbox' name='chkBoxFile' value={$f->fileId} />",
+                    "{$f->filename}",
+                    "{$this->capacityUnit($f->fileSize)}",
+                    "Preview",
+                    "QR",
+                    "
+                        <div className='m-2'>
+                            <button className='btn btn-light mr-3 mb-3' onclick=\"alert('Share Setting Modal')\"><i className='fa fa-cog'></i> Share Setting</button>
+                            <button className='btn btn-danger mr-3 mb-3' onClick=\"window.removeFile('{$fileId}')\"><i className='fa fa-trash-alt'></i> Delete</button>
+                        </div>
+                    "
+
+                ];
+            }
+        }
+
+        $json_data = [
+            "drow" => intval($request->input('draw')),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFilltered),
+            "data" => $data
+        ];
+
+        return json_encode($json_data);
+    }
+
     public function share($id){
         // 0. gen share id
         // 1. create share link
@@ -119,15 +187,11 @@ class fileController extends Controller
         // 3. return response with link
     }
 
-    /**
-     * Display the specified share resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function showShare($shareId)
-    {
-        
+    public function unShare($id){
+        // 0. gen share id
+        // 1. create share link
+        // 2. save link to db
+        // 3. return response with link
     }
 
     /**

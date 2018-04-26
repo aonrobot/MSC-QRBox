@@ -13,12 +13,11 @@ export default class Header extends Component{
     }
 
     logout(){
-        Swal('Logout', 'Successful', 'success').then(res => {
-            if(res){
+        axios.get('logout').then((response) => {
+            if(response.status === 200){
                 location.reload(true);
             }
-        });
-        axios.get('api/services/logout')
+        })
 
     }
 
@@ -34,8 +33,8 @@ export default class Header extends Component{
     
     render(){
         return(
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <a className="navbar-brand" href="/qrbox"><FontAwesomeIcon icon={["fas", "qrcode"]} color="#74b9ff" /> QR-BOX</a>
+            <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top box-shadow p-3 px-md-4">
+                <a className="navbar-brand" href="/qrbox"><FontAwesomeIcon icon={["fas", "qrcode"]} color="#74b9ff" size="2x"/></a>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -43,10 +42,10 @@ export default class Header extends Component{
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item mr-2">
-                            <Link className="btn btn-outline-success" to="/"><FontAwesomeIcon className="mr-1" icon={["fas", "cloud-upload-alt"]}/> Upload<span className="sr-only">(current)</span></Link>
+                            <Link className="btn btn-success" to="/"><FontAwesomeIcon className="mr-1" icon={["fas", "cloud-upload-alt"]}/> Upload<span className="sr-only">(current)</span></Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="btn btn-outline-primary" to="/files"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
+                            <Link className="btn btn-primary" to="/files"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
                         </li>
                     </ul>
                     <div className="mr-3">

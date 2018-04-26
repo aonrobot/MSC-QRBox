@@ -14,6 +14,7 @@ let mix = require('laravel-mix');
 mix.setResourceRoot('/qrlab/public/');
 
 mix.react('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+   .sass('resources/assets/sass/app.scss', 'public/css')
+   .sass('resources/assets/sass/login.scss', 'public/css');
 
 mix.browserSync('mis_test.metrosystems.co.th/qrbox');

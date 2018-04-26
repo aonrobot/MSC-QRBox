@@ -110,10 +110,19 @@ export default class Home extends Component{
                         : ''}
                         
                         { !this.state.showListFile ?
-
-                            <FilePond   allowMultiple={true} 
+                            
+                            <div>
+                                <div class="alert alert-info" role="alert">
+                                    <ul>
+                                        <li>สามารถ upload ได้ครั้งละ 3 ไฟล์</li>
+                                        <li>แต่ละไฟล์ต้องมีขนาดไม่เกิน 1Gb</li>
+                                        <li>และขนาดไฟล์รวมทั้งหมด 3 ไฟล์ต้องไม่เกิน 1Gb</li>
+                                    </ul>
+                                </div>
+                                <FilePond   allowMultiple={true} 
                                         maxFiles={10}
                                         maxFileSize={'1024MB'}
+                                        maxTotalFileSize={'1024MB'}
                                         acceptedFileTypes={['image/*', 'video/mp4', 'audio/*', 'application/pdf']}
                                         ref={ref => this.pond = ref}
                                         server={{
@@ -135,7 +144,8 @@ export default class Home extends Component{
                                         instantUpload={true}
                                         onaddfile={(error, file) => this.handleAddFile(error, file)}
                                         oninit={() => this.handleInit()}
-                            ></FilePond>
+                                ></FilePond>
+                            </div>
 
                         : '' }
 

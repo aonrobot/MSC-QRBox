@@ -19,20 +19,35 @@ export default class Files extends Component{
     }
 
     removeFile(id) {
-        //this.pond._pond.removeFile(id);
-        let login = this.state.login;
-        axios.post('api/file/delete', {id, login}).then((response) => {
-            if(response.status === 200){
-                let files = this.state.files;
-                files = files.filter((el) => (
-                    el.fileId != id
-                ))
-                this.setState({files})
+        Swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.value) {
+                let login = this.state.login;
+                axios.post('api/file/delete', {id, login}).then((response) => {
+                if(response.status === 200){
+                        let files = this.state.files;
+                        files = files.filter((el) => (
+                            el.fileId != id
+                        ))
+                        this.setState({files})
+                        Swal(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
+                    }          
+                }).catch(function (error) {
+                    Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error')
+                });
             }
-            console.log(this.state.files);            
-        }).catch(function (error) {
-            Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error')
-        });
+        })
     }
 
     componentDidMount() {
@@ -55,7 +70,7 @@ export default class Files extends Component{
                         <ListFile files={this.state.files} shareSettingBtn={true} removeFile={this.removeFile}/> 
                     :
                         <div className="d-flex flex-column align-self-center p-3">
-                            <h4>Loading <FontAwesomeIcon icon={["fas", "sync"]} spin className="ml-1"/></h4>
+                            <h1>Loading <FontAwesomeIcon icon={["fas", "sync"]} spin className="ml-1"/></h1>
                         </div>
                 }
                 

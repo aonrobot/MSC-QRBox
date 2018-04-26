@@ -10,6 +10,9 @@ window._ = require('lodash');
 try {
     window.$ = window.jQuery = require('jquery');
     require('bootstrap');
+    window.FontAwesome = require('@fortawesome/fontawesome');
+    $.DataTable = require('datatables.net-bs4');
+    require( 'datatables.net-responsive-bs4' )( $ );
 } catch (e) {}
 
 /**
