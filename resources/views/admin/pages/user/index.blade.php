@@ -21,7 +21,7 @@
                         <table id="userTable" class="table">
                             <thead>
                             <tr>
-                                <th>login user</th>
+                                <th>login</th>
                                 <th>role</th>
                                 <th>maxFiles</th>
                                 <th>maxFileSize</th>

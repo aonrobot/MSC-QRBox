@@ -21,7 +21,7 @@ class LoginController extends Controller
         $username = $request->input('username');    
         $password = $request->input('password');
 
-        $count_exist = Member::where('loginUser', $username)->count();
+        $count_exist = Member::where('loginUser', $username)->where('status', '1')->count();
 
         if($count_exist){
             if (Auth::attempt(['samaccountname' => $username, 'password' => $password])) {
