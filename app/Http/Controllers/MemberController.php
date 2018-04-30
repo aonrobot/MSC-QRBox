@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Member;
+use DB;
 
 class MemberController extends Controller
 {
@@ -15,7 +16,8 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $members = Member::get();
+        $members = DB::select('SELECT * FROM QRBox.dbo.member as m JOIN MSCMain.dbo.EmployeeNew as en ON m.loginUser = en.Login');
+        
         return view('admin.pages.user.index', ['members' => $members]);
     }
 
