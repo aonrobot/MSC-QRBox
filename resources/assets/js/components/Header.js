@@ -44,8 +44,11 @@ export default class Header extends Component{
                         <li className="nav-item mr-2">
                             <Link className="btn btn-success" to="/"><FontAwesomeIcon className="mr-1" icon={["fas", "cloud-upload-alt"]}/> Upload<span className="sr-only">(current)</span></Link>
                         </li>
-                        <li className="nav-item">
+                        <li className="nav-item mr-2">
                             <Link className="btn btn-primary" to="/files"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="btn btn-outline-primary" to="/terms"><FontAwesomeIcon className="mr-1" icon={["fas", "gavel"]}/> เงื่อนไขการใช้งาน</Link>
                         </li>
                     </ul>
                     <div className="mr-3">

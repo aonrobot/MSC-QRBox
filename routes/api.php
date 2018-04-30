@@ -32,7 +32,12 @@ Route::middleware('api')->prefix('file')->group(function () {
     Route::get('{login}', 'fileController@index');
     Route::post('store', 'fileController@store');    
     Route::post('delete', 'fileController@destroy');
+    
     Route::post('listfile/table', 'fileController@listFileTable');
+
+    Route::post('share', 'fileController@share');
+    Route::post('unshare', 'fileController@unShare');
+    Route::post('get/isShare', 'fileController@getIsShare');
 });
 
 

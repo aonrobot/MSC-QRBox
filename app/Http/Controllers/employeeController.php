@@ -16,7 +16,7 @@ class employeeController extends Controller
         try {
             $login = Crypt::decryptString($id);
         } catch (DecryptException $e) {
-            return 'Sorry!! not find this employee in database.';
+            return abort('404');
         }
         
         $empInfo = DB::connection('MSCMain')->table('EmployeeNew')->where('Login', $login)->get();

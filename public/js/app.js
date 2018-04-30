@@ -33470,20 +33470,73 @@ var ListFile = function (_Component) {
 
             var $searchBox = $(this.searchBox);
             $searchBox.keyup(function () {
-                console.log('oTable', oTable, $searchBox.val());
                 oTable.search($searchBox.val()).draw();
             });
 
             $('#shareSettingModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Button that triggered the modal
                 var fileId = button.data('fileid'); // Extract info from data-* attributes
+                var filename = button.data('filename'); // Extract info from data-* attributes
                 // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
                 // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
                 var modal = $(this);
-                modal.find('#fileId').html(fileId);
+                modal.find('#filename').html(filename);
+
+                var checked = void 0;
+                var lableStatus = void 0;
+
+                axios.post('api/file/get/isShare', { id: fileId }).then(function (response) {
+                    if (response.status === 200) {
+                        checked = response.data.isShare === 1 ? true : false;
+                        lableStatus = checked ? 'Disable' : 'Enable';
+                        modal.find('#isChecked').prop('checked', checked);
+                        modal.find('#labelStatus').text(lableStatus);
+                    }
+                });
+
+                modal.find('#isChecked').click(function () {
+                    if (checked) {
+                        axios.post('api/file/unshare', { id: fileId }).then(function (response) {
+                            if (response.status === 200) {
+                                Swal('Disable Sharing Success', '', 'success');
+                            }
+                        });
+                        checked = false;
+                        lableStatus = checked ? 'Disable' : 'Enable';
+                        modal.find('#labelStatus').text(lableStatus);
+                    } else {
+                        axios.post('api/file/share', { id: fileId }).then(function (response) {
+                            if (response.status === 200) {
+                                Swal('Enable Sharing Success', '', 'success');
+                            }
+                        });
+                        checked = true;
+                        lableStatus = checked ? 'Disable' : 'Enable';
+                        modal.find('#labelStatus').text(lableStatus);
+                    }
+                });
+            });
+
+            $('#shareSettingModal').on('hidden.bs.modal', function (event) {
+                var modal = $(this);
+                modal.find('#isChecked').unbind('click');
             });
 
             console.log('data', data, files);
+        }
+    }, {
+        key: 'deleteAll',
+        value: function deleteAll() {
+            var checkedId = [];
+            $("input[name=chkBoxFile]:checked").each(function () {
+                checkedId.push($(this).val());
+            });
+
+            if (checkedId.length <= 0) {
+                //Alert Error 'No Item Select'
+            } else {
+                this.props.removeFiles(checkedId);
+            }
         }
     }, {
         key: 'filePreview',
@@ -33525,7 +33578,6 @@ var ListFile = function (_Component) {
     }, {
         key: 'checkAllFile',
         value: function checkAllFile() {
-            console.log('Check All File');
             $('input[name=chkBoxFile]').prop('checked', $('input[name=chkBoxAllFile]').prop('checked'));
         }
     }, {
@@ -33589,6 +33641,15 @@ var ListFile = function (_Component) {
                                     return _this2.searchBox = el;
                                 } })
                         )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'button',
+                        { type: 'button', className: 'btn btn-danger', style: { position: 'absolute', right: '32px', zIndex: '2' }, onClick: function onClick() {
+                                return _this2.deleteAll();
+                            } },
+                        '  ',
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "trash"] }),
+                        ' Delete All '
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'table',
@@ -33662,27 +33723,9 @@ var ListFile = function (_Component) {
                                         'td',
                                         null,
                                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'p',
-                                            null,
-                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                'button',
-                                                { className: 'btn btn-outline-primary', type: 'button', 'data-toggle': 'collapse', 'data-target': "#collapsePreview-" + fileId, 'aria-expanded': 'false' },
-                                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "eye"] }),
-                                                ' View File'
-                                            )
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'div',
-                                            { className: 'collapse', id: "collapsePreview-" + fileId },
-                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                'div',
-                                                { className: 'card card-body' },
-                                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                                    'a',
-                                                    { href: "file/" + fileId, target: '_blank', src: file.filename },
-                                                    _this2.filePreview(fileId, file.fileType, file.filename)
-                                                )
-                                            )
+                                            'a',
+                                            { href: "file/" + fileId, target: '_blank', src: file.filename },
+                                            _this2.filePreview(fileId, file.fileType, file.filename)
                                         )
                                     ),
                                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -33700,7 +33743,7 @@ var ListFile = function (_Component) {
                                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
                                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                                 'a',
-                                                { className: 'btn btn-secondary', href: "services/genqrcode/" + fileId, download: true },
+                                                { className: 'btn btn-secondary', href: "services/genqrcode/" + file.shareLink, download: true },
                                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "download"] }),
                                                 ' Download QR Code'
                                             )
@@ -33711,7 +33754,7 @@ var ListFile = function (_Component) {
                                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                                 'div',
                                                 { className: 'm-2' },
-                                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: 'services/genqrcode/' + fileId, className: 'd-none d-sm-none d-lg-block img-thumbnail' })
+                                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('img', { src: 'services/genqrcode/' + file.shareLink, className: 'd-none d-sm-none d-lg-block img-thumbnail' })
                                             )
                                         )
                                     ),
@@ -33723,7 +33766,7 @@ var ListFile = function (_Component) {
                                             { className: 'm-2' },
                                             _this2.props.shareSettingBtn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                                 'button',
-                                                { className: 'btn btn-light mr-3 mb-3', 'data-toggle': 'modal', 'data-target': '#shareSettingModal', 'data-fileid': fileId },
+                                                { className: 'btn btn-light mr-3 mb-3', 'data-toggle': 'modal', 'data-target': '#shareSettingModal', 'data-fileid': fileId, 'data-filename': file.name },
                                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "cog"] }),
                                                 ' Share Setting'
                                             ) : '',
@@ -33774,15 +33817,20 @@ var ListFile = function (_Component) {
                                 'div',
                                 { className: 'modal-body' },
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'h3',
+                                    'h5',
                                     null,
-                                    'Share File ',
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('small', { id: 'fileId' })
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { id: 'labelStatus' }),
+                                    ' Sharing File'
+                                ),
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'h5',
+                                    null,
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('small', { id: 'filename' })
                                 ),
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                     'label',
                                     { className: 'switch' },
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'checkbox', defaultChecked: true }),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: "isChecked", type: 'checkbox' }),
                                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'slider round' })
                                 )
                             ),
@@ -62016,6 +62064,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_Footer__ = __webpack_require__(123);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__components_pages_Home__ = __webpack_require__(124);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__components_pages_Files__ = __webpack_require__(145);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__components_pages_Terms__ = __webpack_require__(150);
 
 
 
@@ -62037,6 +62086,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+
 __WEBPACK_IMPORTED_MODULE_2__fortawesome_fontawesome__["default"].library.add(__WEBPACK_IMPORTED_MODULE_4__fortawesome_fontawesome_free_regular__["a" /* default */], __WEBPACK_IMPORTED_MODULE_5__fortawesome_fontawesome_free_brands__["a" /* default */], __WEBPACK_IMPORTED_MODULE_6__fortawesome_fontawesome_free_solid__["a" /* default */]);
 
 var Routes = function Routes() {
@@ -62048,7 +62098,8 @@ var Routes = function Routes() {
             null,
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_8__components_Header__["a" /* default */], null),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7_react_router_dom__["c" /* Route */], { exact: true, path: '/', component: __WEBPACK_IMPORTED_MODULE_10__components_pages_Home__["a" /* default */] }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7_react_router_dom__["c" /* Route */], { path: '/files', component: __WEBPACK_IMPORTED_MODULE_11__components_pages_Files__["a" /* default */] })
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7_react_router_dom__["c" /* Route */], { path: '/files', component: __WEBPACK_IMPORTED_MODULE_11__components_pages_Files__["a" /* default */] }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7_react_router_dom__["c" /* Route */], { path: '/terms', component: __WEBPACK_IMPORTED_MODULE_12__components_pages_Terms__["a" /* default */] })
         )
     );
 };
@@ -85630,12 +85681,22 @@ var Header = function (_Component) {
                         ),
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                             'li',
-                            { className: 'nav-item' },
+                            { className: 'nav-item mr-2' },
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Link */],
                                 { className: 'btn btn-primary', to: '/files' },
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "file-alt"] }),
                                 ' My Files'
+                            )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            { className: 'nav-item' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Link */],
+                                { className: 'btn btn-outline-primary', to: '/terms' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "gavel"] }),
+                                ' \u0E40\u0E07\u0E37\u0E48\u0E2D\u0E19\u0E44\u0E02\u0E01\u0E32\u0E23\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19'
                             )
                         )
                     ),
@@ -85857,7 +85918,7 @@ var Home = function (_Component) {
             showListFile: false
         };
 
-        _this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
+        _this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
 
         _this.removeFile = _this.removeFile.bind(_this);
         _this.toggleShowListFile = _this.toggleShowListFile.bind(_this);
@@ -85961,65 +86022,38 @@ var Home = function (_Component) {
                             ' Cop. PCL.'
                         ),
                         this.state.files.length > 0 && !this.state.showListFile ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_8__GetQRCodeBtn__["a" /* default */], { handleClick: this.toggleShowListFile, login: this.state.login, files: this.state.files, countAddFile: this.state.countAddFile }) : '',
-                        !this.state.showListFile ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            null,
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'div',
-                                { 'class': 'alert alert-info', role: 'alert' },
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'ul',
-                                    null,
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'li',
-                                        null,
-                                        '\u0E2A\u0E32\u0E21\u0E32\u0E23\u0E16 upload \u0E44\u0E14\u0E49\u0E04\u0E23\u0E31\u0E49\u0E07\u0E25\u0E30 3 \u0E44\u0E1F\u0E25\u0E4C'
-                                    ),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'li',
-                                        null,
-                                        '\u0E41\u0E15\u0E48\u0E25\u0E30\u0E44\u0E1F\u0E25\u0E4C\u0E15\u0E49\u0E2D\u0E07\u0E21\u0E35\u0E02\u0E19\u0E32\u0E14\u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 1Gb'
-                                    ),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        'li',
-                                        null,
-                                        '\u0E41\u0E25\u0E30\u0E02\u0E19\u0E32\u0E14\u0E44\u0E1F\u0E25\u0E4C\u0E23\u0E27\u0E21\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14 3 \u0E44\u0E1F\u0E25\u0E4C\u0E15\u0E49\u0E2D\u0E07\u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 1Gb'
-                                    )
-                                )
-                            ),
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_filepond__["a" /* FilePond */], { allowMultiple: true,
-                                maxFiles: 10,
-                                maxFileSize: '1024MB',
-                                maxTotalFileSize: '1024MB',
-                                acceptedFileTypes: ['image/*', 'video/mp4', 'audio/*', 'application/pdf'],
-                                ref: function ref(_ref) {
-                                    return _this4.pond = _ref;
-                                },
-                                server: {
-                                    url: 'api/uploadBox',
-                                    process: {
-                                        headers: {
-                                            'X-CSRF-TOKEN': this.state.token,
-                                            'BASIC-AUTH': this.state.login
-                                        }
-                                    },
-                                    revert: {
-                                        headers: {
-                                            'X-CSRF-TOKEN': this.state.token,
-                                            'BASIC-AUTH': this.state.login
-                                        }
+                        !this.state.showListFile ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_filepond__["a" /* FilePond */], { allowMultiple: true,
+                            maxFiles: 3,
+                            maxFileSize: '1024MB',
+                            maxTotalFileSize: '1024MB',
+                            acceptedFileTypes: ['image/*', 'video/mp4', 'audio/*', 'application/pdf'],
+                            ref: function ref(_ref) {
+                                return _this4.pond = _ref;
+                            },
+                            server: {
+                                url: 'api/uploadBox',
+                                process: {
+                                    headers: {
+                                        'X-CSRF-TOKEN': this.state.token,
+                                        'BASIC-AUTH': this.state.login
                                     }
                                 },
-                                labelIdle: this.uploadUIlabel,
-                                instantUpload: true,
-                                onaddfile: function onaddfile(error, file) {
-                                    return _this4.handleAddFile(error, file);
-                                },
-                                oninit: function oninit() {
-                                    return _this4.handleInit();
+                                revert: {
+                                    headers: {
+                                        'X-CSRF-TOKEN': this.state.token,
+                                        'BASIC-AUTH': this.state.login
+                                    }
                                 }
-                            })
-                        ) : '',
+                            },
+                            labelIdle: this.uploadUIlabel,
+                            instantUpload: true,
+                            onaddfile: function onaddfile(error, file) {
+                                return _this4.handleAddFile(error, file);
+                            },
+                            oninit: function oninit() {
+                                return _this4.handleInit();
+                            }
+                        }) : '',
                         this.state.files.length > 0 && !this.state.showListFile ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_8__GetQRCodeBtn__["a" /* default */], { handleClick: this.getQRCodeClick, login: this.state.login, files: this.state.files, countAddFile: this.state.countAddFile }) : ''
                     )
                 ),
@@ -98423,12 +98457,13 @@ var Files = function (_Component) {
         };
 
         _this.removeFile = _this.removeFile.bind(_this);
+        _this.removeFiles = _this.removeFiles.bind(_this);
         return _this;
     }
 
     _createClass(Files, [{
-        key: 'removeFile',
-        value: function removeFile(id) {
+        key: 'removeFiles',
+        value: function removeFiles(ids) {
             var _this2 = this;
 
             Swal({
@@ -98441,14 +98476,74 @@ var Files = function (_Component) {
                 confirmButtonText: 'Yes, delete it!'
             }).then(function (result) {
                 if (result.value) {
-                    var login = _this2.state.login;
+                    var _loop = function _loop(id) {
+                        var login = _this2.state.login;
+                        axios.post('api/file/delete', { id: id, login: login }).then(function (response) {
+                            if (response.status === 200) {
+                                var files = _this2.state.files;
+                                files = files.filter(function (el) {
+                                    return el.fileId != id;
+                                });
+                                _this2.setState({ files: files });
+                            }
+                        }).catch(function (error) {
+                            Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error');
+                            return 0;
+                        });
+                    };
+
+                    var _iteratorNormalCompletion = true;
+                    var _didIteratorError = false;
+                    var _iteratorError = undefined;
+
+                    try {
+                        for (var _iterator = ids[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                            var id = _step.value;
+
+                            _loop(id);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
+                            }
+                        } finally {
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+
+                    Swal('Deleted!', 'Your file has been deleted.', 'success');
+                }
+            });
+        }
+    }, {
+        key: 'removeFile',
+        value: function removeFile(id) {
+            var _this3 = this;
+
+            Swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then(function (result) {
+                if (result.value) {
+                    var login = _this3.state.login;
                     axios.post('api/file/delete', { id: id, login: login }).then(function (response) {
                         if (response.status === 200) {
-                            var files = _this2.state.files;
+                            var files = _this3.state.files;
                             files = files.filter(function (el) {
                                 return el.fileId != id;
                             });
-                            _this2.setState({ files: files });
+                            _this3.setState({ files: files });
                             Swal('Deleted!', 'Your file has been deleted.', 'success');
                         }
                     }).catch(function (error) {
@@ -98460,12 +98555,12 @@ var Files = function (_Component) {
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-            var _this3 = this;
+            var _this4 = this;
 
             axios.get('api/file/' + this.state.login).then(function (response) {
                 if (response.status === 200) {
                     console.log(response);
-                    _this3.setState({ files: response.data, finishLoading: true });
+                    _this4.setState({ files: response.data, finishLoading: true });
                 }
             }).catch(function (error) {
                 Swal('ไม่สามารถดึงข้อมูลได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error');
@@ -98478,7 +98573,7 @@ var Files = function (_Component) {
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
                 { className: 'd-flex h-100 pl-5 pt-4 mt-3' },
-                this.state.finishLoading ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__ListFile__["a" /* default */], { files: this.state.files, shareSettingBtn: true, removeFile: this.removeFile }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                this.state.finishLoading ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__ListFile__["a" /* default */], { files: this.state.files, shareSettingBtn: true, removeFile: this.removeFile, removeFiles: this.removeFiles }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
                     { className: 'd-flex flex-column align-self-center p-3' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -98508,6 +98603,113 @@ var Files = function (_Component) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 148 */,
+/* 149 */,
+/* 150 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__fortawesome_react_fontawesome__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__fortawesome_react_fontawesome___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__fortawesome_react_fontawesome__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+var Terms = function (_Component) {
+    _inherits(Terms, _Component);
+
+    function Terms(props) {
+        _classCallCheck(this, Terms);
+
+        var _this = _possibleConstructorReturn(this, (Terms.__proto__ || Object.getPrototypeOf(Terms)).call(this, props));
+
+        _this.state = {
+            token: document.head.querySelector('meta[name="csrf-token"]').content,
+            login: document.head.querySelector('meta[name="basic-auth"]').content
+        };
+        return _this;
+    }
+
+    _createClass(Terms, [{
+        key: 'render',
+        value: function render() {
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                { className: 'd-flex h-100 pl-5 pr-5 pt-4 mt-3' },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { 'class': 'jumbotron w-100 text-center' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'h1',
+                        { 'class': 'display-4' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "gavel"] }),
+                        ' \u0E40\u0E07\u0E37\u0E48\u0E2D\u0E19\u0E44\u0E02\u0E01\u0E32\u0E23\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19\u0E41\u0E25\u0E30\u0E1A\u0E23\u0E34\u0E01\u0E32\u0E23'
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'p',
+                        { 'class': 'lead' },
+                        '\u0E43\u0E19\u0E01\u0E32\u0E23\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19 QR-Box \u0E21\u0E35\u0E40\u0E07\u0E37\u0E48\u0E2D\u0E19\u0E44\u0E02\u0E15\u0E48\u0E32\u0E07\u0E46\u0E43\u0E19\u0E01\u0E32\u0E23\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19\u0E15\u0E32\u0E21\u0E14\u0E49\u0E32\u0E19\u0E25\u0E48\u0E32\u0E07\u0E19\u0E35\u0E49'
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('hr', { 'class': 'my-4' }),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'alert alert-info text-left w-50 m-auto', role: 'alert' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'b',
+                            null,
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "location-arrow"] }),
+                            ' \u0E40\u0E07\u0E37\u0E48\u0E2D\u0E19\u0E44\u0E02\u0E43\u0E19\u0E01\u0E32\u0E23\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19'
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'ul',
+                            null,
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'li',
+                                null,
+                                '\u0E2A\u0E32\u0E21\u0E32\u0E23\u0E16 upload \u0E44\u0E14\u0E49\u0E04\u0E23\u0E31\u0E49\u0E07\u0E25\u0E30 3 \u0E44\u0E1F\u0E25\u0E4C'
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'li',
+                                null,
+                                '\u0E41\u0E15\u0E48\u0E25\u0E30\u0E44\u0E1F\u0E25\u0E4C\u0E15\u0E49\u0E2D\u0E07\u0E21\u0E35\u0E02\u0E19\u0E32\u0E14\u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 1Gb'
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'li',
+                                null,
+                                '\u0E41\u0E25\u0E30\u0E02\u0E19\u0E32\u0E14\u0E44\u0E1F\u0E25\u0E4C\u0E23\u0E27\u0E21\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14 3 \u0E44\u0E1F\u0E25\u0E4C\u0E15\u0E49\u0E2D\u0E07\u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 1Gb'
+                            )
+                        )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'p',
+                        { 'class': 'lead mt-5' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'a',
+                            { 'class': 'btn btn-primary btn-lg', href: '#', role: 'button' },
+                            '\u0E28\u0E36\u0E01\u0E29\u0E32\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E40\u0E15\u0E34\u0E21'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Terms;
+}(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
+
+/* harmony default export */ __webpack_exports__["a"] = (Terms);
 
 /***/ })
 /******/ ]);

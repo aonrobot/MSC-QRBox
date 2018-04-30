@@ -29,6 +29,14 @@ Route::prefix('share')->group(function () {
     Route::get('{id}', 'ShareController@show');
 });
 
+Route::group(['middleware' => ['auth'], 'prefix' => 'admin'], function () {
+
+    Route::get('/', function(){
+        echo 'eiei';
+    });
+
+});
+
 Route::group(['middleware' => ['auth']], function () {
 
 	//Service
@@ -39,8 +47,6 @@ Route::group(['middleware' => ['auth']], function () {
     //File
     Route::prefix('file')->group(function () {
         Route::get('{id}', 'fileController@show');
-        Route::post('share/{id}', 'fileController@share');
-        Route::post('unshare/{id}', 'fileController@unShare');
     });
 
     //React Application

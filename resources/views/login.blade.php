@@ -27,13 +27,11 @@
                     </div>
 
                     <div class="form-label-group text-left">
-                        <input type="text" id="inputEmail" name="username" class="form-control" placeholder="Email address" required="" autofocus="">
-                        <label for="inputEmail">Username</label>
+                        <input type="text" id="inputEmail" name="username" class="form-control mb-3" placeholder="Email address" required="" autofocus="">
                     </div>
                     
                     <div class="form-label-group text-left">
-                        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required="">
-                        <label for="inputPassword">Password</label>
+                        <input type="password" id="inputPassword" name="password" class="form-control mb-3" placeholder="Password" required="">
                     </div>
 
                     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
@@ -45,8 +43,11 @@
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 particleground(document.getElementById('particles'), {
-                    dotColor: '#DDD',
-                    lineColor: '#EFEFEF'
+                    //for present
+                    dotColor: '#CECECE',
+                    lineColor: '#E5E5E5'
+                    //dotColor: '#E5E5E5',
+                    //lineColor: '#F9F9F9'
                 });
                 var intro = document.getElementById('intro');
                 intro.style.marginTop = - intro.offsetHeight / 2 + 'px';
