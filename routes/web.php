@@ -29,10 +29,12 @@ Route::prefix('share')->group(function () {
     Route::get('{id}', 'ShareController@show');
 });
 
-Route::group(['middleware' => ['auth'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth', 'auth.admin'], 'prefix' => 'admin'], function () {
 
-    Route::get('/', function(){
-        echo 'eiei';
+    Route::get('/', 'AdminController@index')->name('admin.index');
+
+    Route::prefix('user')->group(function () {
+        Route::get('/', 'MemberController@index')->name('admin.user');
     });
 
 });

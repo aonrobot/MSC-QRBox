@@ -16,7 +16,7 @@
         <div id="particles">
             <div id="intro">
                 <img class="mb-4" src="{{asset('images/logo.png')}}" alt="" width="290" height="100">
-                <h1>404 | <small>Not Found This File</small></h1>
+                <h1>404 | <small>Not Found</small></h1>
             </div>
             <script>
             document.addEventListener('DOMContentLoaded', function () {
