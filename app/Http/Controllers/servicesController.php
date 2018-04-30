@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Storage;
+use Session;
 use File;
 use Response;
 
 use QrCode;
+
 
 class servicesController extends Controller
 {
@@ -17,10 +19,6 @@ class servicesController extends Controller
         $response = Response::make(QrCode::format('png')->merge('/public/images/msc10.png', .15)->size(500)->generate(env('APP_URL') . 'share/' . $id), 200);
         $response->header("Content-Type", "image/png");
         return $response;
-    }
-
-    public function logout(){
-        abort(401);
     }
 
     /**

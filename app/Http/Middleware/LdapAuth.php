@@ -6,7 +6,10 @@ use Closure;
 
 use Crypt;
 
-class BasicAuth
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+
+class LdapAuth
 {
     /**
      * Handle an incoming request.
@@ -17,9 +20,10 @@ class BasicAuth
      */
     public function handle($request, Closure $next)
     {
-        $user_basic = Crypt::encryptString($_SERVER['PHP_AUTH_USER']);
 
-        $request->session()->put('basic-auth', $user_basic);
+        if(!Auth::check()){
+            return new Response(view('login'));
+        }
         
         return $next($request);
     }

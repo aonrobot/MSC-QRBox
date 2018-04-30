@@ -1,6 +1,6 @@
 {
   "private": true,
-  "homepage": "http://mis_test.metrosystems.co.th:3000/qrbox",
+  "homepage": "http://mis_test.metrosystems.co.th/qrbox",
   "scripts": {
     "dev": "npm run development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -27,11 +27,13 @@
     "popper.js": "^1.14.1"
   },
   "dependencies": {
-    "@fortawesome/fontawesome": "^1.1.4",
+    "@fortawesome/fontawesome": "^1.1.5",
     "@fortawesome/fontawesome-free-brands": "^5.0.8",
     "@fortawesome/fontawesome-free-regular": "^5.0.10",
     "@fortawesome/fontawesome-free-solid": "^5.0.8",
     "@fortawesome/react-fontawesome": "0.0.17",
+    "datatables.net-bs4": "^1.10.16",
+    "datatables.net-responsive-bs4": "^2.2.1",
     "filepond-plugin-file-validate-size": "^1.0.3",
     "filepond-plugin-file-validate-type": "^1.0.3",
     "filepond-plugin-image-preview": "^1.0.5",

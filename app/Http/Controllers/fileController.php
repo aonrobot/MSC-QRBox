@@ -24,7 +24,7 @@ class fileController extends Controller
         try {
             $user_login = Crypt::decryptString($login);
         } catch (DecryptException $e) {
-            return 'Sorry!!';
+            return abort('404');
         }
 
         $files = FileModel::where('loginUser', $user_login)->orderBy('created_at', 'desc')->get();
@@ -42,12 +42,12 @@ class fileController extends Controller
         //
     }
 
-    private function checkExistFileId($id){
-        $count = FileModel::where('fileId', $id)->count();
+    private function checkExistId($id, $col){
+        $count = FileModel::where($col, $id)->count();
         if($count > 0) {
             do{
                 $newId = str_random(9);
-                $count = FileModel::where('fileId', $newId)->count();
+                $count = FileModel::where($col, $newId)->count();
             } while($count > 0);
             return $newId;
         } else {
@@ -69,7 +69,7 @@ class fileController extends Controller
         try {
             $user_login = Crypt::decryptString($user_login);
         } catch (DecryptException $e) {
-            return 'Sorry!! you can\'t save this file';
+            return abort('404');
         }
 
         $temp_folder_name = 'temp-' . $user_login;
@@ -84,9 +84,15 @@ class fileController extends Controller
             $public_path = $public_folder_name . '/' . $file_name;
 
             //$mimeType = MimeType::get($file['fileExtension']);
+
+            //gen share id
+            $shareId = $this->checkExistId(str_random(9), 'shareId');
+            $random1 = str_random(1);
+            //create share link
+            $shareLink = base64_encode($shareId . $random1);
             
             $f = new FileModel;
-            $f->fileId = $this->checkExistFileId($file['id']);
+            $f->fileId = $this->checkExistId($file['id'], 'fileId');
             $f->nameId = $file_id;
             $f->serverId = $file_serverId;
             $f->filename = $file['filename'];
@@ -97,6 +103,8 @@ class fileController extends Controller
             $f->fileSize = $file['fileSize'];
             $f->fileLastModified = (string) $file['fileLastModified'];
             $f->isShare = 0;
+            $f->shareId = $shareId;
+            $f->shareLink = $shareLink;
             $f->loginUser = $user_login;
             $f->save();
 
@@ -112,22 +120,91 @@ class fileController extends Controller
 
     }
 
-    public function share($id){
-        // 0. gen share id
-        // 1. create share link
-        // 2. save link to db
-        // 3. return response with link
+    private function capacityUnit($value, $i = 0){
+        $value = ($value < 1000) ? $value : $value / 1000;
+        if($value >= 1000){
+            return $this->capacityUnit($value, ++$i);
+        } else {
+            $i++;
+            return $value . ['bytes', 'Kb', 'Mb', 'Gb', 'Tb', '', '', ''][$i];
+        }
     }
 
-    /**
-     * Display the specified share resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function showShare($shareId)
-    {
-        
+    public function listFileTable(Request $request){
+        $columns = ['created_at', 'filename', 'fileSize']; //Name must same in database column name
+
+        $totalData = FileModel::count();
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        //Don't
+        if(empty($request->input('search.value'))){
+            $files = FileModel::skip($start)->take($limit)->orderBy($order, $dir)->get();
+            $totalFilltered = $totalData;
+        }else{
+            $search = $request->input('search.value');
+            $files = FileModel::where('filename', "%{$search}%")
+                                ->orWhere('fileSize', "%{intval($search)}%")
+                                ->skip($start)
+                                ->take($limit)
+                                ->orderBy($order, $dir)
+                                ->get();
+            $totalFilltered = FileModel::where('filename', "%{$search}%")
+                                ->orWhere('fileSize', "%{intval($search)}%")
+                                ->count();
+        }
+
+        $data = [];
+
+        if($files){
+            foreach($files as $f){
+                $fileId = strval($f->fileId);
+                $data[] = [
+                    "<input type='checkbox' name='chkBoxFile' value={$f->fileId} />",
+                    "{$f->filename}",
+                    "{$this->capacityUnit($f->fileSize)}",
+                    "Preview",
+                    "QR",
+                    "
+                        <div className='m-2'>
+                            <button className='btn btn-light mr-3 mb-3' onclick=\"alert('Share Setting Modal')\"><i className='fa fa-cog'></i> Share Setting</button>
+                            <button className='btn btn-danger mr-3 mb-3' onClick=\"window.removeFile('{$fileId}')\"><i className='fa fa-trash-alt'></i> Delete</button>
+                        </div>
+                    "
+
+                ];
+            }
+        }
+
+        $json_data = [
+            "drow" => intval($request->input('draw')),
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalFilltered),
+            "data" => $data
+        ];
+
+        return json_encode($json_data);
+    }
+
+    public function getIsShare(Request $request){
+        $isShare = FileModel::where('fileId', $request->input('id'))->first()->isShare;
+        $json_data = [
+            "isShare" => intval($isShare)
+        ];
+
+        return json_encode($json_data);
+    }
+
+    public function share(Request $request){
+        $id = $request->input('id');
+        FileModel::where('fileId', $id)->update(['isShare' => 1]);
+    }
+
+    public function unShare(Request $request){
+        $id = $request->input('id');
+        FileModel::where('fileId', $id)->update(['isShare' => 0]);        
     }
 
     /**
@@ -147,7 +224,7 @@ class fileController extends Controller
         try {
             $user_login = Crypt::decryptString($user_login);
         } catch (DecryptException $e) {
-            return 'Sorry!!';
+            return abort('404');
         }
 
         if($user_login !== $file_login){
@@ -228,7 +305,7 @@ class fileController extends Controller
                 }
     
             } catch (DecryptException $e) {
-                return 'Sorry!! not find this file.';
+                return abort('404');
             } 
         }               
     }

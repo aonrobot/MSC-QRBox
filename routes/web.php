@@ -11,14 +11,50 @@
 |
 */
 
-Route::prefix('file')->group(function () {
-    Route::get('{id}', 'fileController@show');
+// Auth
+Route::view('login', 'login')->name('login');
+Route::get('logout', 'LoginController@logout')->name('logout');
+Route::post('/do.login', 'LoginController@do');
+
+Route::get('test.login', function(){
+    $result = Auth::attempt(['samaccountname' => 'auttawir', 'password' => 'admin123456']);
+    $user = $user = Adldap::search()->users()->find('auttawir');
+    echo Auth::check() ? 'yes' : 'no';
+    echo '<br>';
+    print_r($user);
 });
 
-Route::view('/{path?}', 'welcome')
-     ->where('path', '\b(?!ignoreme|ignoreyou)\b\S+')
-     ->name('react');
+//Share
+Route::prefix('share')->group(function () {
+    Route::get('{id}', 'ShareController@show');
+});
 
-/*Route::get('/', function(){
-    return view('welcome');
-});*/
+Route::group(['middleware' => ['auth'], 'prefix' => 'admin'], function () {
+
+    Route::get('/', function(){
+        echo 'eiei';
+    });
+
+});
+
+Route::group(['middleware' => ['auth']], function () {
+
+	//Service
+    Route::prefix('services')->group(function () {
+        Route::get('genqrcode/{id}', 'servicesController@genQrCode');
+    });
+
+    //File
+    Route::prefix('file')->group(function () {
+        Route::get('{id}', 'fileController@show');
+    });
+
+    //React Application
+    Route::get('/{path?}', function () {
+        return view('home');
+    })->where('path', '\b(?!ignoreme|ignoreyou)\b\S+')->name('react');
+
+});
+
+
+

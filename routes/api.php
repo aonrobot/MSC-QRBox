@@ -20,7 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //Service    
 Route::middleware('api')->prefix('services')->group(function () {
     Route::get('genqrcode/{id}', 'servicesController@genQrCode');    
-    Route::get('logout', 'servicesController@logout');
 });
 
 //Employee
@@ -33,6 +32,12 @@ Route::middleware('api')->prefix('file')->group(function () {
     Route::get('{login}', 'fileController@index');
     Route::post('store', 'fileController@store');    
     Route::post('delete', 'fileController@destroy');
+    
+    Route::post('listfile/table', 'fileController@listFileTable');
+
+    Route::post('share', 'fileController@share');
+    Route::post('unshare', 'fileController@unShare');
+    Route::post('get/isShare', 'fileController@getIsShare');
 });
 
 

@@ -31,7 +31,7 @@ export default class Home extends Component{
             showListFile: false
         };
 
-        this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
+        this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
 
         this.removeFile = this.removeFile.bind(this);
         this.toggleShowListFile = this.toggleShowListFile.bind(this);
@@ -110,31 +110,32 @@ export default class Home extends Component{
                         : ''}
                         
                         { !this.state.showListFile ?
-
+                            
                             <FilePond   allowMultiple={true} 
-                                        maxFiles={10}
-                                        maxFileSize={'1024MB'}
-                                        acceptedFileTypes={['image/*', 'video/mp4', 'audio/*', 'application/pdf']}
-                                        ref={ref => this.pond = ref}
-                                        server={{
-                                            url: 'api/uploadBox',
-                                            process: {
-                                                headers: {
-                                                    'X-CSRF-TOKEN': this.state.token,
-                                                    'BASIC-AUTH': this.state.login
-                                                }
-                                            },
-                                            revert: {
-                                                headers: {
-                                                    'X-CSRF-TOKEN': this.state.token,
-                                                    'BASIC-AUTH': this.state.login
-                                                }
+                                    maxFiles={3}
+                                    maxFileSize={'1024MB'}
+                                    maxTotalFileSize={'1024MB'}
+                                    acceptedFileTypes={['image/*', 'video/mp4', 'audio/*', 'application/pdf']}
+                                    ref={ref => this.pond = ref}
+                                    server={{
+                                        url: 'api/uploadBox',
+                                        process: {
+                                            headers: {
+                                                'X-CSRF-TOKEN': this.state.token,
+                                                'BASIC-AUTH': this.state.login
                                             }
-                                        }}
-                                        labelIdle={this.uploadUIlabel}
-                                        instantUpload={true}
-                                        onaddfile={(error, file) => this.handleAddFile(error, file)}
-                                        oninit={() => this.handleInit()}
+                                        },
+                                        revert: {
+                                            headers: {
+                                                'X-CSRF-TOKEN': this.state.token,
+                                                'BASIC-AUTH': this.state.login
+                                            }
+                                        }
+                                    }}
+                                    labelIdle={this.uploadUIlabel}
+                                    instantUpload={true}
+                                    onaddfile={(error, file) => this.handleAddFile(error, file)}
+                                    oninit={() => this.handleInit()}
                             ></FilePond>
 
                         : '' }

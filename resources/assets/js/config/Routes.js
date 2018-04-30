@@ -12,12 +12,13 @@ import solids from '@fortawesome/fontawesome-free-solid';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 //Component
-import Main from '../components/Main';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 //Pages
 import Home from '../components/pages/Home';
 import Files from '../components/pages/Files';
+import Terms from '../components/pages/Terms';
 
 fontawesome.library.add(regular, brands, solids);
 
@@ -27,6 +28,8 @@ const Routes = () => (
             <Header />
             <Route exact path="/" component={Home} />
             <Route path="/files" component={Files} />
+            <Route path="/terms" component={Terms} />
+            {/*<Footer />*/}         
         </div>
     </Router>
 );

@@ -5,7 +5,7 @@ export default class Util{
             return this.capacityUnit(value, ++i)
         }else{
             i++
-            return value + ['bytes', 'Kb', 'Mb', 'Gb', 'Tb', '', '', ''][i]
+            return value.toFixed(2) + ['bytes', 'Kb', 'Mb', 'Gb', 'Tb', '', '', ''][i]
         }
     }
 }
