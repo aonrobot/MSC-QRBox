@@ -44,10 +44,10 @@
             document.addEventListener('DOMContentLoaded', function () {
                 particleground(document.getElementById('particles'), {
                     //for present
-                    dotColor: '#CECECE',
-                    lineColor: '#E5E5E5'
-                    //dotColor: '#E5E5E5',
-                    //lineColor: '#F9F9F9'
+                    // dotColor: '#CECECE',
+                    // lineColor: '#E5E5E5'
+                    dotColor: '#E5E5E5',
+                    lineColor: '#F9F9F9'
                 });
                 var intro = document.getElementById('intro');
                 intro.style.marginTop = - intro.offsetHeight / 2 + 'px';

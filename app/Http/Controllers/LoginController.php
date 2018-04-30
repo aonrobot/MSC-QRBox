@@ -25,7 +25,7 @@ class LoginController extends Controller
             return redirect('/')->with('message', 'Logged in!');
         }
         
-        return redirect('login')->with('message', 'Hmm... Your username or password is incorrect');
+        return redirect('login')->with('message', 'Password หรือ Username ผิด');
     }
 
     public function logout(){
