@@ -230,7 +230,7 @@ class fileController extends Controller
         }
 
         if($user_login !== $file_login){
-            return view('404');
+            return abort('404');
         }
 
         // find path(filename with extension) by id from DB
@@ -239,7 +239,7 @@ class fileController extends Controller
         $path = $public_path . '/' . $filename;
 
         if(!Storage::exists($path)){
-            return view('404');
+            return abort('404');
         }
 
         $file = Storage::get($path);
