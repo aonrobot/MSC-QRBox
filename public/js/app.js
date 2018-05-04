@@ -32843,16 +32843,7 @@ var ListFile = function (_Component) {
 
             var $table = $(this.table);
             var oTable = $table.DataTable({
-                /*procressing: true,
-                serverSide: true,
-                ajax: {
-                    url: 'api/file/listfile/table',
-                    dataType: 'JSON',
-                    type: 'POST',
-                    data: {
-                        _token: this.state.token
-                    }
-                },*/
+
                 responsive: true,
                 columns: [{
                     width: "1%",
@@ -32886,13 +32877,13 @@ var ListFile = function (_Component) {
             });
 
             $('#shareSettingModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Button that triggered the modal
-                var fileId = button.data('fileid'); // Extract info from data-* attributes
-                var filename = button.data('filename'); // Extract info from data-* attributes
-                // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-                // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                var button = $(event.relatedTarget);
+                var fileId = button.data('fileid');
+                var shareLink = button.data('sharelink');
                 var modal = $(this);
-                modal.find('#filename').html(filename);
+
+                var appURL = document.head.querySelector('meta[name="app-url"]').content;
+                modal.find('#sharelink').html(appURL + 'share/' + shareLink);
 
                 var checked = void 0;
                 var lableStatus = void 0;
@@ -32933,8 +32924,6 @@ var ListFile = function (_Component) {
                 var modal = $(this);
                 modal.find('#isChecked').unbind('click');
             });
-
-            console.log('data', data, files);
         }
     }, {
         key: 'deleteAll',
@@ -33178,7 +33167,7 @@ var ListFile = function (_Component) {
                                             { className: 'm-2' },
                                             _this2.props.shareSettingBtn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                                 'button',
-                                                { className: 'btn btn-light mr-3 mb-3', 'data-toggle': 'modal', 'data-target': '#shareSettingModal', 'data-fileid': fileId, 'data-filename': file.name },
+                                                { className: 'btn btn-light mr-3 mb-3', 'data-toggle': 'modal', 'data-target': '#shareSettingModal', 'data-fileid': fileId, 'data-sharelink': file.shareLink },
                                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "cog"] }),
                                                 ' Share Setting'
                                             ) : '',
@@ -33229,21 +33218,35 @@ var ListFile = function (_Component) {
                                 'div',
                                 { className: 'modal-body' },
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'h5',
-                                    null,
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { id: 'labelStatus' }),
-                                    ' Sharing File'
-                                ),
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'h5',
-                                    null,
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('small', { id: 'filename' })
-                                ),
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'label',
-                                    { className: 'switch' },
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: "isChecked", type: 'checkbox' }),
-                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'slider round' })
+                                    'div',
+                                    { className: 'row' },
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'div',
+                                        { className: 'col-md-12' },
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'h5',
+                                            null,
+                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { id: 'labelStatus' }),
+                                            ' Sharing File'
+                                        ),
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'label',
+                                            { className: 'switch' },
+                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: "isChecked", type: 'checkbox' }),
+                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'slider round' })
+                                        )
+                                    ),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'div',
+                                        { className: 'col-md-12' },
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                            'h5',
+                                            null,
+                                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { id: 'labelStatus' }),
+                                            ' Share Link'
+                                        ),
+                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('p', { id: 'sharelink' })
+                                    )
                                 )
                             ),
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -85613,7 +85616,8 @@ var Header = function (_Component) {
         var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
 
         _this.state = {
-            userInfo: []
+            userInfo: [],
+            isAdmin: null
         };
         return _this;
     }
@@ -85635,7 +85639,10 @@ var Header = function (_Component) {
             var login = document.head.querySelector('meta[name="basic-auth"]').content;
             __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/employee/info/' + login).then(function (response) {
                 _this2.setState({ userInfo: response.data[0] });
-                console.log(_this2.state.userInfo);
+            });
+
+            __WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('api/employee/isAdmin/' + login).then(function (response) {
+                _this2.setState({ isAdmin: response.data });
             });
 
             window.addEventListener('beforeunload', this.keepOnPage);
@@ -85698,7 +85705,18 @@ var Header = function (_Component) {
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "gavel"] }),
                                 ' \u0E40\u0E07\u0E37\u0E48\u0E2D\u0E19\u0E44\u0E02\u0E01\u0E32\u0E23\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19'
                             )
-                        )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('li', { className: 'nav-text mr-5' }),
+                        this.state.isAdmin ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            { className: 'nav-item mr-2' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'a',
+                                { className: 'btn btn-outline-danger', href: 'admin', target: '_blank' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "at"] }),
+                                ' dmin'
+                            )
+                        ) : ''
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',
@@ -98486,7 +98504,11 @@ var Files = function (_Component) {
                                 _this2.setState({ files: files });
                             }
                         }).catch(function (error) {
-                            Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error');
+                            Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error').then(function (result) {
+                                if (result) {
+                                    location.reload(true);
+                                }
+                            });
                             return 0;
                         });
                     };
