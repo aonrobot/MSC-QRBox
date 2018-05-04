@@ -246,7 +246,7 @@ class fileController extends Controller
         $type = Storage::mimeType($path);
 
         $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
+        $response->header("Content-Type", $type, true, 200);
         $response->header("Content-Disposition", "inline");
         $response->header("filename", (string) $file_detail->filename);
         $response->header("Content-Location", (string) $file_detail->serverId);
