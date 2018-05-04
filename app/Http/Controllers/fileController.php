@@ -219,6 +219,8 @@ class fileController extends Controller
 
         $user_login = Session::get('basic-auth');
         $file_detail = FileModel::where('fileId', $id)->first();
+        if(empty($file_detail)) abort('404');
+
         $file_login = $file_detail->loginUser;        
 
         try {
