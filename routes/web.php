@@ -26,7 +26,7 @@ Route::get('test.login', function(){
 
 //Share
 Route::prefix('share')->group(function () {
-    Route::get('{id}', 'ShareController@show');
+    Route::get('{id}/{name?}', 'ShareController@show');
 });
 
 Route::group(['middleware' => ['auth', 'auth.admin'], 'prefix' => 'admin'], function () {
