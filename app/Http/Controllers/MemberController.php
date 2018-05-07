@@ -17,7 +17,7 @@ class MemberController extends Controller
      */
     public function index()
     {
-        $members = DB::select('SELECT * FROM QRBox.dbo.member as m JOIN MSCMain.dbo.EmployeeNew as en ON m.loginUser = en.Login');
+        $members = DB::select('SELECT * FROM QRBox.dbo.member as m JOIN MSCMain.dbo.EmployeeNew as en ON m.loginUser = en.Login WHERE WorkingStatus = 1');
         $employees = DB::select("SELECT * FROM MSCMain.dbo.EmployeeNew as en LEFT JOIN QRBox.dbo.member as m ON en.Login = m.loginUser WHERE m.loginUser IS NULL");
         
         return view('admin.pages.user.index', ['members' => $members, 'employees' => $employees]);
@@ -42,20 +42,21 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $login = $request->input('login');
-        $maxFiles = $request->input('maxFile');
+        $role = $request->input('role');
+        $maxFiles = $request->input('maxFiles');
         $maxFileSize = $request->input('maxFileSize');
         $maxTotalFileSize = $request->input('maxTotalFileSize');
 
-        Member::create([
-            'memberId' => base64_encode($login),
-            'loginUser' => $login,
-            'role' => 'user',
-            'maxFiles' => $maxFiles,
-            'maxFileSize' => $maxFileSize,
-            'maxTotalFileSize' => $maxTotalFileSize,
-            'acceptedFileTypes' => 'default',
-            'status' => '1'
-        ]);
+        $m = new Member;
+        $m->memberId = base64_encode($login);
+        $m->loginUser = $login;
+        $m->role = $role;
+        $m->maxFiles = $maxFiles;
+        $m->maxFileSize = $maxFileSize;
+        $m->maxTotalFileSize =  $maxTotalFileSize;
+        $m->acceptedFileTypes = 'default';
+        $m->status = '1';
+        $m->save();
     }
 
     /**
@@ -66,7 +67,10 @@ class MemberController extends Controller
      */
     public function show($id)
     {
-        //
+        $userInfo = Member::where('loginUser', base64_decode($id))->first();
+        $bigInfo = DB::connection('MSCMain')->table('EmployeeNew')->where('login', base64_decode($id))->first();
+        $userInfo->FullNameEng = $bigInfo->FullNameEng;
+        return response()->json($userInfo);
     }
 
     /**
@@ -89,7 +93,17 @@ class MemberController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $role = $request->input('role');
+        $maxFiles = $request->input('maxFiles');
+        $maxFileSize = $request->input('maxFileSize');
+        $maxTotalFileSize = $request->input('maxTotalFileSize');
+
+        Member::where('loginUser', base64_decode($id))->update([
+            'role' => $role,
+            'maxFiles' => $maxFiles,
+            'maxFileSize' => $maxFileSize,
+            'maxTotalFileSize' => $maxTotalFileSize
+        ]);
     }
 
     /**
@@ -100,7 +114,8 @@ class MemberController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $login = base64_decode($id);
+        Member::where('loginUser', $login)->delete();
     }
 
     /**

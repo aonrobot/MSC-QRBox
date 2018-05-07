@@ -13,7 +13,7 @@
 
 // Auth
 Route::view('login', 'login')->name('login');
-Route::get('logout', 'LoginController@logout')->name('logout');
+Route::get('/logout', 'LoginController@logout')->name('logout');
 Route::post('/do.login', 'LoginController@do');
 
 //Share

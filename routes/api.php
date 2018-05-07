@@ -24,7 +24,10 @@ Route::middleware('api')->prefix('services')->group(function () {
 
 //Employee
 Route::middleware('api')->prefix('employee')->group(function () {
+    Route::get('show/{id}', 'MemberController@show');    
     Route::post('store', 'MemberController@store');
+    Route::post('update/{id}', 'MemberController@update');
+    Route::get('destroy/{id}', 'MemberController@destroy');
     Route::get('info/{id}', 'MemberController@info');
     Route::get('isAdmin/{loginUserCrypt}', 'MemberController@isAdmin'); 
 });
@@ -41,7 +44,6 @@ Route::middleware('api')->prefix('file')->group(function () {
     Route::post('unshare', 'fileController@unShare');
     Route::post('get/isShare', 'fileController@getIsShare');
 });
-
 
 Route::middleware('api')->post('/uploadBox', 'uploadController@store');
 Route::middleware('api')->delete('/uploadBox', 'uploadController@destroy');

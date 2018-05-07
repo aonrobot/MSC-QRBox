@@ -15,7 +15,7 @@
         <li class="nav-item">
             <a class="nav-link" href="#" role="button">
                 <img src="{{asset('images/admin/avatar-1.png')}}" class="avatar avatar-sm" alt="logo">
-                <span class="small ml-1 d-md-down-none">{{}}</span>
+                <span class="small ml-1 d-md-down-none">{{Session::get('user-info')->FullNameEng}}</span>
             </a>
         </li>
     </ul>

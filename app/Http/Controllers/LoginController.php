@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Crypt;
 use Session;
+use DB;
 
 use App\Member;
 
@@ -27,8 +28,20 @@ class LoginController extends Controller
 
         if($count_exist){
             if (Auth::attempt(['samaccountname' => $username, 'password' => $password])) {
+
                 $user = Auth::user();
-                Session::put('basic-auth', Crypt::encryptString($user->getAccountName()));
+                //Get user login from AD Attribute
+                $userLogin = $user->getAccountName();
+                Session::put('basic-auth', Crypt::encryptString($userLogin));
+                $userInfo = DB::connection('MSCMain')->table('EmployeeNew')->where('login', $userLogin)->first();
+
+                //Check have user in EmployeeNew?
+                if(!empty($userInfo)){
+                    Session::put('user-info', $userInfo);
+                }else{
+                    return response()->view('error.noLogin');
+                }
+
                 if(Session::has('url.intended')){
                     return redirect(Session::get('url.intended'))->with('message', 'Logged in!');                    
                 } else {
