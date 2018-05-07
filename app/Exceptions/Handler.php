@@ -8,6 +8,8 @@ use Request;
 use Illuminate\Auth\AuthenticationException;
 use Response;
 
+use Session;
+
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -53,6 +55,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof AuthenticationException){
+            if(!Session::has('url.intended'))
+            {
+                Session::put('url.intended', url()->previous());
+            }
+            return redirect()->guest('/login');
+        }
         return parent::render($request, $exception);
     }
 }

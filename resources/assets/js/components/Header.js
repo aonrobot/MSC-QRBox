@@ -8,7 +8,8 @@ export default class Header extends Component{
     constructor(props){
         super(props);
         this.state = {
-            userInfo : []
+            userInfo : [],
+            isAdmin : null
         }
     }
 
@@ -25,7 +26,10 @@ export default class Header extends Component{
         let login = document.head.querySelector('meta[name="basic-auth"]').content;
         axios.get('api/employee/info/' + login).then(response => {
             this.setState({userInfo : response.data[0]});
-            console.log(this.state.userInfo);
+        });
+
+        axios.get('api/employee/isAdmin/' + login).then(response => {
+            this.setState({isAdmin : response.data});
         });
 
         window.addEventListener('beforeunload', this.keepOnPage);
@@ -50,6 +54,15 @@ export default class Header extends Component{
                         <li className="nav-item">
                             <Link className="btn btn-outline-primary" to="/terms"><FontAwesomeIcon className="mr-1" icon={["fas", "gavel"]}/> เงื่อนไขการใช้งาน</Link>
                         </li>
+                        <li className="nav-text mr-5"></li>
+                        {
+                            (this.state.isAdmin) ? 
+                                <li className="nav-item mr-2">
+                                    <a className="btn btn-outline-danger" href="admin" target="_blank"><FontAwesomeIcon icon={["fas", "at"]}/> dmin</a>
+                                </li>
+                            :
+                                ''
+                        }
                     </ul>
                     <div className="mr-3">
                         <button className="btn btn-outline-secondary mr-3" type="button" disabled>Hi, {this.state.userInfo.FullNameEng}</button>

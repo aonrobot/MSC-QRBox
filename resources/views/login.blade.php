@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="{{ app()->getLocale() }}">
     <head>
@@ -34,9 +35,9 @@
                         <input type="password" id="inputPassword" name="password" class="form-control mb-3" placeholder="Password" required="">
                     </div>
 
-                    <button class="btn btn-outline-secondary btn-block" type="button" onclick="">Sign Up</button>
+                    <button class="btn btn-outline-secondary btn-block" type="button" onclick="">สมัครสมาชิก</button>
 
-                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">ลงชื่อเข้าใช้งาน</button>
 
                 </form>
             </div>

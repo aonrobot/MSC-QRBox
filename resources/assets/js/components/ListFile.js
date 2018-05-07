@@ -34,16 +34,7 @@ export default class ListFile extends Component {
 
         var $table = $(this.table);
         var oTable = $table.DataTable({
-            /*procressing: true,
-            serverSide: true,
-            ajax: {
-                url: 'api/file/listfile/table',
-                dataType: 'JSON',
-                type: 'POST',
-                data: {
-                    _token: this.state.token
-                }
-            },*/
+
             responsive: true,
             columns: [
                 {
@@ -84,13 +75,14 @@ export default class ListFile extends Component {
         })
 
         $('#shareSettingModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var fileId = button.data('fileid') // Extract info from data-* attributes
-            var filename = button.data('filename') // Extract info from data-* attributes
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var button = $(event.relatedTarget)
+            var fileId = button.data('fileid')
+            var fileName = button.data('filename')             
+            var shareLink = button.data('sharelink') 
             var modal = $(this)
-            modal.find('#filename').html(filename)
+
+            let appURL = document.head.querySelector('meta[name="app-url"]').content;
+            modal.find('#sharelink').html(appURL + 'share/' + shareLink + '/' + fileName)
 
             let checked;
             let lableStatus;
@@ -132,8 +124,6 @@ export default class ListFile extends Component {
             var modal = $(this)
             modal.find('#isChecked').unbind('click');            
         })
-
-        console.log('data', data, files)
     }
 
     deleteAll () {
@@ -208,20 +198,14 @@ export default class ListFile extends Component {
                                     <input type="text" className="searchBox" ref={el => this.searchBox = el}/>   
                                 </div>
                             </div>
-                            
                             <button type="button" className="btn btn-danger" style={{  position: 'absolute', right: '32px' , zIndex: '2' }} onClick={ () => this.deleteAll() } >  <FontAwesomeIcon icon={["fas", "trash"]} /> Delete All </button>
-                            
-
                             <table className="table table-bordered display responsive" width="100%" ref={el => this.table = el}>
-                            
                                 <thead className="thead-light">
                                     <tr>
                                         <th scope="col"><input type="checkbox" name="chkBoxAllFile" onClick={() => this.checkAllFile()}/></th>                                        
                                         <th scope="col">File Name</th>
                                         <th scope="col">Size</th>
                                         <th scope="col" className="w-25">Preview</th>
-                                        {/*<th scope="col">Type</th>*/}
-                                        
                                         <th scope="col">QR Code</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -238,21 +222,10 @@ export default class ListFile extends Component {
                                                         <td>{file.filename}</td>
                                                         <td>{Util.capacityUnit(file.fileSize)}</td>
                                                         <td>
-                                                            {/*<p>
-                                                                <button className="btn btn-outline-primary" type="button" data-toggle="collapse" data-target={"#collapsePreview-" + fileId} aria-expanded="false">
-                                                                    <FontAwesomeIcon icon={["fas", "eye"]} /> View File
-                                                                </button>
-                                                            </p>
-                                                            <div className="collapse" id={"collapsePreview-" + fileId}>
-                                                                <div className="card card-body">
-                                                                    
-                                                                </div>
-                                                            </div>*/}
                                                             <a href={"file/" + fileId} target="_blank" src={file.filename}>
                                                                 {this.filePreview(fileId, file.fileType, file.filename)}
                                                             </a>
                                                         </td>
-                                                        {/*<td>{file.fileExtension}</td>*/}
                                                         <td>
                                                             <p>
                                                                 <button className="btn btn-outline-primary mb-3" type="button" data-toggle="collapse" data-target={"#collapseQRCode-" + fileId} aria-expanded="false">
@@ -273,7 +246,7 @@ export default class ListFile extends Component {
                                                             <div className="m-2">
                                                                 {
                                                                     (this.props.shareSettingBtn) ? 
-                                                                        <button className="btn btn-light mr-3 mb-3" data-toggle="modal" data-target="#shareSettingModal" data-fileid={fileId} data-filename={file.name}><FontAwesomeIcon icon={["fas", "cog"]} /> Share Setting</button>
+                                                                        <button className="btn btn-light mr-3 mb-3" data-toggle="modal" data-target="#shareSettingModal" data-fileid={fileId} data-sharelink={file.shareLink} data-filename={file.filename}><FontAwesomeIcon icon={["fas", "cog"]} /> Share Setting</button>
                                                                     : 
                                                                         ''
                                                                 }
@@ -300,12 +273,19 @@ export default class ListFile extends Component {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <h5><span id="labelStatus"></span> Sharing File</h5>
-                            <h5><small id="filename"></small></h5>
-                            <label className="switch">
-                                <input id={"isChecked"} type="checkbox"/>
-                                <span className="slider round"></span>
-                            </label>
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <h5><span id="labelStatus"></span> Sharing File</h5>
+                                    <label className="switch">
+                                        <input id={"isChecked"} type="checkbox"/>
+                                        <span className="slider round"></span>
+                                    </label>
+                                </div>
+                                <div className="col-md-12">
+                                    <h5><span id="labelStatus"></span> Share Link</h5>
+                                    <p id="sharelink"></p>
+                                </div>
+                            </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>

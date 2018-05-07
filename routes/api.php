@@ -24,7 +24,9 @@ Route::middleware('api')->prefix('services')->group(function () {
 
 //Employee
 Route::middleware('api')->prefix('employee')->group(function () {
-    Route::get('info/{id}', 'employeeController@infoAPI'); 
+    Route::post('store', 'MemberController@store');
+    Route::get('info/{id}', 'MemberController@info');
+    Route::get('isAdmin/{loginUserCrypt}', 'MemberController@isAdmin'); 
 });
 
 //File

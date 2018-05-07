@@ -16,14 +16,6 @@ Route::view('login', 'login')->name('login');
 Route::get('logout', 'LoginController@logout')->name('logout');
 Route::post('/do.login', 'LoginController@do');
 
-Route::get('test.login', function(){
-    $result = Auth::attempt(['samaccountname' => 'auttawir', 'password' => 'admin123456']);
-    $user = $user = Adldap::search()->users()->find('auttawir');
-    echo Auth::check() ? 'yes' : 'no';
-    echo '<br>';
-    print_r($user);
-});
-
 //Share
 Route::prefix('share')->group(function () {
     Route::get('{id}/{name?}', 'ShareController@show');

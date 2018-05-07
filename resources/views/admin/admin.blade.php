@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="{{asset('css/app-admin.css')}}">
 
     <link rel="stylesheet" href="{{asset('vendor/DataTables/datatables.min.css')}}">
+
+    @yield('vendor_css')
+
+    @yield('css')
     
 </head>
 <body class="sidebar-fixed header-fixed">
@@ -35,6 +39,10 @@
 <script src="{{asset('vendor/bootstrap/js/bootstrap.min.js')}}"></script>
 <script src="{{asset('vendor/chart.js/chart.min.js')}}"></script>
 <script src="{{asset('vendor/DataTables/datatables.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2"></script>
+
+@yield('vendor_javascript')
+
 
 <script src="{{asset('js/carbon.js')}}"></script>
 <script src="{{asset('js/app-admin.js')}}"></script>
