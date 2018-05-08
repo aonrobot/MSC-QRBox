@@ -20,7 +20,7 @@
                 <ul class="nav-dropdown-items">
                     <li class="nav-item">
                         <a href="{{route('admin.user')}}" class="nav-link {{$page_url === route('admin.user') ? 'active' : ''}}">
-                            <i class="fab fa-fort-awesome"></i> Management
+                            <i class="fas fa-user"></i> User Management
                         </a>
                     </li>
                 </ul>

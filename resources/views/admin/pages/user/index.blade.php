@@ -48,7 +48,7 @@
                                     <td class="text-nowrap">{{$m->role}}</td>
                                     <td>{{$m->status}}</td>
                                     <td>
-                                        <button type="button" class="btn btn-primary editMemberBtn" data-id="{{$m->memberId}}" data-toggle="modal" data-target="#editModal">
+                                        <button type="button" class="btn btn-primary" data-id="{{$m->memberId}}" data-toggle="modal" data-target="#editModal">
                                             <i class="far fa-edit"></i> Edit
                                         </button>
                                         <button type="button" class="btn btn-danger removeMemberBtn" data-id="{{$m->memberId}}">
@@ -200,6 +200,12 @@
             var maxFileSize = $('#maxFileSize').val()
             var maxTotalFileSize = $('#maxTotalFileSize').val()
 
+            if(memberSelect === ''){
+                swal('พบปัญหา ไม่สามารถเพิ่มข้อมูลได้', 'เนื่องจากไม่พบ Login ในระบบ', 'error');
+                $('#addModal').modal('hide');
+                return 0;
+            }
+
             $.post('{{asset("api/employee/store")}}', {
                     login : memberSelect,
                     role : roleSelect,
@@ -228,9 +234,10 @@
         })
 
         //Update Member
+
         $('#editModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var modal = $(this)
+            var button = $(event.relatedTarget);
+            var modal = $(this);
             
             var loginUser = button.data('id');
             var userInfo = null;
@@ -241,7 +248,7 @@
                 async : false,
                 dataType : "json",
                 error : function(xhr,status,error){
-                    swal('พบปัญหา', status, 'error')
+                    swal('พบปัญหา', 'อาจมีปัญหาบางอย่างระหว่างเพิ่มข้อมูล เช่น Internet มีปัญหา', 'error')
                 },
                 success : function(result){
                     userInfo = result; 
@@ -281,16 +288,29 @@
         //Remove Member
         $('.removeMemberBtn').click(function(){
             var that = $(this);
-            $.get('{{asset("api/employee/destroy")}}/' + $(this).data('id')).done(function(){
-                swal('ลบข้อมูลเรียบร้อยครับ', '', 'success').then(function(r){
-                    if(r){
-                        that.closest("tr").remove()
-                    }
-                })
-                
-            }).fail(function(){
-                swal('พบปัญหา', 'อาจมีปัญหาบางอย่างระหว่างเพิ่มข้อมูล เช่น Internet มีปัญหา', 'error')
+            swal({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    $.get('{{asset("api/employee/destroy")}}/' + $(this).data('id')).done(function(){
+                        swal('ลบข้อมูลเรียบร้อยครับ', '', 'success').then(function(r){
+                            if(r){
+                                that.closest("tr").remove()
+                            }
+                        })
+                        
+                    }).fail(function(){
+                        swal('พบปัญหา', 'อาจมีปัญหาบางอย่างระหว่างเพิ่มข้อมูล เช่น Internet มีปัญหา', 'error')
+                    })
+                }
             })
+            
         })
 
     });
