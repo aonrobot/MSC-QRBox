@@ -50,7 +50,6 @@ export default class ListFile extends Component {
                     width: "1%"                    
                 },
                 {
-                    title: 'Preview',
                     orderable: false,
                     searchable: false
                 },
@@ -78,11 +77,11 @@ export default class ListFile extends Component {
             var button = $(event.relatedTarget)
             var fileId = button.data('fileid')
             var fileName = button.data('filename')             
-            var shareLink = button.data('sharelink') 
+            var shareLink = button.data('shareLinkInput') 
             var modal = $(this)
 
             let appURL = document.head.querySelector('meta[name="app-url"]').content;
-            modal.find('#sharelink').html(appURL + 'share/' + shareLink + '/' + fileName)
+            modal.find('#shareLinkInput').val(appURL + 'share/' + shareLink + '/' + fileName)
 
             let checked;
             let lableStatus;
@@ -93,6 +92,11 @@ export default class ListFile extends Component {
                     lableStatus = (checked) ? 'Disable' : 'Enable';
                     modal.find('#isChecked').prop('checked', checked);
                     modal.find('#labelStatus').text(lableStatus);
+                    if(checked){
+                        modal.find('#shareLinkDiv').show() 
+                    }else{
+                        modal.find('#shareLinkDiv').hide() 
+                    }
                 }
             });
 
@@ -105,7 +109,8 @@ export default class ListFile extends Component {
                     });
                     checked = false;
                     lableStatus = (checked) ? 'Disable' : 'Enable';
-                    modal.find('#labelStatus').text(lableStatus);                    
+                    modal.find('#labelStatus').text(lableStatus);    
+                    modal.find('#shareLinkDiv').hide()                
                 } else {
                     axios.post('api/file/share', {id : fileId}).then((response) => {
                         if(response.status === 200){
@@ -114,7 +119,8 @@ export default class ListFile extends Component {
                     });
                     checked = true;   
                     lableStatus = (checked) ? 'Disable' : 'Enable';
-                    modal.find('#labelStatus').text(lableStatus);                  
+                    modal.find('#labelStatus').text(lableStatus);
+                    modal.find('#shareLinkDiv').show()                     
                 }
             })
             
@@ -146,7 +152,6 @@ export default class ListFile extends Component {
             case 'application' :
                 return (
                     <div>
-                        (to-do) Image Tag src to image preview from first page of pdf
                         <h5 className="mt-2">
                             <FontAwesomeIcon className="mr-1" icon={["fas", "file"]}/>
                             Click here to view <span className="badge badge-light">{mimeTypeSub}</span> file.                   
@@ -202,10 +207,12 @@ export default class ListFile extends Component {
                             <table className="table table-bordered display responsive" width="100%" ref={el => this.table = el}>
                                 <thead className="thead-light">
                                     <tr>
-                                        <th scope="col"><input type="checkbox" name="chkBoxAllFile" onClick={() => this.checkAllFile()}/></th>                                        
+                                        <th scope="col">
+                                            <input type="checkbox" name="chkBoxAllFile" onClick={() => this.checkAllFile()}/>
+                                        </th>
                                         <th scope="col">File Name</th>
                                         <th scope="col">Size</th>
-                                        <th scope="col" className="w-25">Preview</th>
+                                        <th scope="col" className="w-25">Upload Date</th>
                                         <th scope="col">QR Code</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -219,28 +226,20 @@ export default class ListFile extends Component {
                                                         <td>
                                                             <input type="checkbox" name="chkBoxFile" value={fileId} />
                                                         </td>                                                        
-                                                        <td>{file.filename}</td>
-                                                        <td>{Util.capacityUnit(file.fileSize)}</td>
                                                         <td>
                                                             <a href={"file/" + fileId} target="_blank" src={file.filename}>
-                                                                {this.filePreview(fileId, file.fileType, file.filename)}
+                                                                {file.filename}
                                                             </a>
+                                                        </td>
+                                                        <td>{Util.capacityUnit(file.fileSize)}</td>
+                                                        <td>
+                                                            {moment(file.created_at).format('DD/MM/YYYY, h:mm:ss a')}
                                                         </td>
                                                         <td>
                                                             <p>
-                                                                <button className="btn btn-outline-primary mb-3" type="button" data-toggle="collapse" data-target={"#collapseQRCode-" + fileId} aria-expanded="false">
-                                                                    <FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code
-                                                                </button>
-                                                                
-                                                                <br/> 
+                                                                <a className="btn btn-outline-primary mr-3" href={"services/genqrcode/" + file.shareLink} target={"_blank"}><FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code</a>
                                                                 <a className="btn btn-secondary" href={"services/genqrcode/" + file.shareLink} download><FontAwesomeIcon icon={["fas", "download"]} /> Download QR Code</a>                                                            
-                                                            </p>
-                                                            <div className="collapse" id={"collapseQRCode-" + fileId}>
-                                                                <div className="m-2">
-                                                                    <img src={'services/genqrcode/' + file.shareLink} className="d-none d-sm-none d-lg-block img-thumbnail"/>    
-                                                                </div>  
-                                                            </div>
-                                                            
+                                                            </p>                                                            
                                                         </td>
                                                         <td>
                                                             <div className="m-2">
@@ -281,9 +280,18 @@ export default class ListFile extends Component {
                                         <span className="slider round"></span>
                                     </label>
                                 </div>
-                                <div className="col-md-12">
+                                <div className="col-md-12" id="shareLinkDiv">
                                     <h5><span id="labelStatus"></span> Share Link</h5>
-                                    <p id="sharelink"></p>
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <button className="btn btn-secondary" onClick={() => {
+                                                this.refs.shareLinkInput.select();
+                                                document.execCommand("Copy");
+                                                Swal('Copied!!','Copy link to Clipboard success','success')
+                                            }} data-toggle="tooltip" data-placement="top" title="Copy Link To Clipboard"><FontAwesomeIcon icon={["fas", "copy"]} /> Copy</button>
+                                        </div>
+                                        <input type="text" className="form-control" ref="shareLinkInput" id="shareLinkInput" onClick={(event) => {event.target.select()}}/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
