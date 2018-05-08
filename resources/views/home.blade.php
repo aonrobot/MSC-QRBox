@@ -11,10 +11,14 @@
         <title>QR Box | Metrosystems</title>
 
         <link href="{{url(mix('css/app.css'))}}" rel="stylesheet" type="text/css">
+
+        
     </head>
     <body>
-        <div id="main"></div>
+        <div id="main"></div>        
         <script src="{{url(mix('js/app.js'))}}" ></script>
+        <script src="{{url('js/filepond-polyfill.min.js')}}"></script>
+        
         <script>
             // var pond = document.querySelector('.filepond--root');
             // pond.addEventListener('FilePond:processfile', e => {

@@ -32879,11 +32879,12 @@ var ListFile = function (_Component) {
             $('#shareSettingModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget);
                 var fileId = button.data('fileid');
+                var fileName = button.data('filename');
                 var shareLink = button.data('sharelink');
                 var modal = $(this);
 
                 var appURL = document.head.querySelector('meta[name="app-url"]').content;
-                modal.find('#sharelink').html(appURL + 'share/' + shareLink);
+                modal.find('#sharelink').html(appURL + 'share/' + shareLink + '/' + fileName);
 
                 var checked = void 0;
                 var lableStatus = void 0;
@@ -33167,7 +33168,7 @@ var ListFile = function (_Component) {
                                             { className: 'm-2' },
                                             _this2.props.shareSettingBtn ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                                 'button',
-                                                { className: 'btn btn-light mr-3 mb-3', 'data-toggle': 'modal', 'data-target': '#shareSettingModal', 'data-fileid': fileId, 'data-sharelink': file.shareLink },
+                                                { className: 'btn btn-light mr-3 mb-3', 'data-toggle': 'modal', 'data-target': '#shareSettingModal', 'data-fileid': fileId, 'data-sharelink': file.shareLink, 'data-filename': file.filename },
                                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "cog"] }),
                                                 ' Share Setting'
                                             ) : '',

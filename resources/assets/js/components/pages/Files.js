@@ -41,7 +41,11 @@ export default class Files extends Component{
 							this.setState({files})
 						}          
 					}).catch(function (error) {
-						Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error')
+						Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error').then((result) => {
+                            if(result){
+                                location.reload(true);
+                            }
+                        })
 						return 0;
 					});
 				}
