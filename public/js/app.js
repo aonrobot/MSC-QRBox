@@ -85677,7 +85677,7 @@ var Header = function (_Component) {
                             { className: 'nav-item mr-2' },
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Link */],
-                                { className: 'btn btn-success', to: '/' },
+                                { className: 'nav-link text-success', to: '/' },
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "cloud-upload-alt"] }),
                                 ' Upload',
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -85692,7 +85692,7 @@ var Header = function (_Component) {
                             { className: 'nav-item mr-2' },
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Link */],
-                                { className: 'btn btn-primary', to: '/files' },
+                                { className: 'nav-link text-primary', to: '/files' },
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "file-alt"] }),
                                 ' My Files'
                             )
@@ -85702,22 +85702,12 @@ var Header = function (_Component) {
                             { className: 'nav-item' },
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 __WEBPACK_IMPORTED_MODULE_1_react_router_dom__["b" /* Link */],
-                                { className: 'btn btn-outline-primary', to: '/terms' },
+                                { className: 'nav-link', to: '/terms' },
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { className: 'mr-1', icon: ["fas", "gavel"] }),
                                 ' \u0E40\u0E07\u0E37\u0E48\u0E2D\u0E19\u0E44\u0E02\u0E01\u0E32\u0E23\u0E43\u0E0A\u0E49\u0E07\u0E32\u0E19'
                             )
                         ),
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('li', { className: 'nav-text mr-5' }),
-                        this.state.isAdmin ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'li',
-                            { className: 'nav-item mr-2' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'a',
-                                { className: 'btn btn-outline-danger', href: 'admin', target: '_blank' },
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "at"] }),
-                                ' dmin'
-                            )
-                        ) : ''
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('li', { className: 'nav-text' })
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',
@@ -85728,6 +85718,16 @@ var Header = function (_Component) {
                             'Hi, ',
                             this.state.userInfo.FullNameEng
                         ),
+                        this.state.isAdmin ?
+                        //<li className="nav-item mr-2">
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'a',
+                            { className: 'btn btn-outline-warning mr-3', href: 'admin', target: '_blank' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fortawesome_react_fontawesome___default.a, { icon: ["fas", "fire"] }),
+                            ' Admin Zone'
+                        )
+                        // </li>
+                        : '',
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                             'button',
                             { className: 'btn btn-outline-danger', type: 'button', onClick: function onClick() {

@@ -46,26 +46,28 @@ export default class Header extends Component{
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item mr-2">
-                            <Link className="btn btn-success" to="/"><FontAwesomeIcon className="mr-1" icon={["fas", "cloud-upload-alt"]}/> Upload<span className="sr-only">(current)</span></Link>
+                            <Link className="nav-link text-success" to="/"><FontAwesomeIcon className="mr-1" icon={["fas", "cloud-upload-alt"]}/> Upload<span className="sr-only">(current)</span></Link>
                         </li>
                         <li className="nav-item mr-2">
-                            <Link className="btn btn-primary" to="/files"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
+                            <Link className="nav-link text-primary" to="/files"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="btn btn-outline-primary" to="/terms"><FontAwesomeIcon className="mr-1" icon={["fas", "gavel"]}/> เงื่อนไขการใช้งาน</Link>
+                            <Link className="nav-link" to="/terms"><FontAwesomeIcon className="mr-1" icon={["fas", "gavel"]}/> เงื่อนไขการใช้งาน</Link>
                         </li>
-                        <li className="nav-text mr-5"></li>
-                        {
-                            (this.state.isAdmin) ? 
-                                <li className="nav-item mr-2">
-                                    <a className="btn btn-outline-danger" href="admin" target="_blank"><FontAwesomeIcon icon={["fas", "at"]}/> dmin</a>
-                                </li>
-                            :
-                                ''
-                        }
+
+                        <li className="nav-text"></li>
+                        
                     </ul>
                     <div className="mr-3">
                         <button className="btn btn-outline-secondary mr-3" type="button" disabled>Hi, {this.state.userInfo.FullNameEng}</button>
+                        {
+                            (this.state.isAdmin) ? 
+                                //<li className="nav-item mr-2">
+                                    <a className="btn btn-outline-warning mr-3" href="admin" target="_blank"><FontAwesomeIcon icon={["fas", "fire"]}/> Admin Zone</a>
+                               // </li>
+                            :
+                                ''
+                        }
                         <button className="btn btn-outline-danger" type="button" onClick={() => this.logout()}>Logout!!</button>
                     </div>
                 </div>
