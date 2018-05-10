@@ -20,10 +20,12 @@ mix.options({
             ie8: true ,
             safari10: true
           }
-    }
+    },
+    publicPath: 'public'
 });
 
-mix.setResourceRoot('/qrlab/public/');
+mix.setPublicPath('public/');
+mix.setResourceRoot('public/');
 
 mix.react('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')

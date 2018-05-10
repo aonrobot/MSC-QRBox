@@ -1,5 +1,5 @@
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url("https://fonts.googleapis.com/css?family=Mitr|Poppins");
 
 // Variables
 @import "variables";
@@ -15,6 +15,7 @@
 html,
 body {
     height: 100%;
+    font-family: 'Poppins', 'Mitr', sans-serif;
 }
 
 body {
@@ -34,6 +35,10 @@ body {
     margin: auto;
 }
 
+.form-control{
+    padding: 0.875rem 0.75rem;
+    font-size: 0.95rem;
+}
 
 #particles {
     width: 100%;
@@ -57,3 +62,4 @@ body {
 #openEdge{
     font-size: 3.5em;
 }
+
