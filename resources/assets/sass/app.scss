@@ -1,6 +1,6 @@
 
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import url("https://fonts.googleapis.com/css?family=Mitr|Poppins");
 
 // Variables
 @import "variables";
@@ -11,7 +11,7 @@
 html, body {
     background-color: #fff;
     color: #636b6f;
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Poppins', 'Mitr', sans-serif;
     font-weight: 100;
     height: 100vh;
     margin: 0;
@@ -141,12 +141,27 @@ input:checked + .slider:before {
 }
 
 //DataTable
-table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody td{
+
+.dataTable th, .dataTable td {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.dataTable thead {
+    border-bottom: 1px solid #dee2e6;
+}
+.dataTable tbody tr:last-child {
+    border-bottom: 1px solid transparent !important;
+}
+.table-bordered{
+    border: 0px solid #dee2e6!important;
+}
+table.table-bordered.dataTable tbody th, table.table-bordered.dataTable tbody tr{
     border-top-width: 0;
-    border-bottom: 1px solid #dee2e6!important;
+    border-bottom: 1px solid #dee2e6 ;
 }
 table.table-bordered.dataTable th, table.table-bordered.dataTable td{
-    border-top-width: 0;
+    border-top-width: 0!important;
+    border: 0px!important;
 }
 
 .dataTables_filter, .dataTables_info {
@@ -160,4 +175,8 @@ table.table-bordered.dataTable th, table.table-bordered.dataTable td{
 .wrapSearchBox{
     text-align: center;
     margin: 0 auto;
+}
+
+.deleteAll{
+    
 }

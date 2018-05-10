@@ -33,8 +33,8 @@ export default class Home extends Component{
 
         this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
 
-        this.removeFile = this.removeFile.bind(this);
         this.toggleShowListFile = this.toggleShowListFile.bind(this);
+        //this.setFiles = this.setFiles.bind(this);
     }
 
     componentDidMount() {
@@ -42,24 +42,19 @@ export default class Home extends Component{
         
     }
 
-    removeFile(id) {
-        //this.pond._pond.removeFile(id);
-        let login = this.state.login;
-        axios.post('api/file/delete', {id, login}).then((response) => {
-            if(response.status === 200){
-                let files = this.state.files;
-                files = files.filter((el) => (
-                    el.id != id
-                ))
-                this.setState({files})
-            }
-            console.log(this.state.files);            
-        })
+    setFiles(files) {
+        console.log('updateFiles', files);
+        this.setState({files});
     }
 
     toggleShowListFile(checkGenQRCodeBtn = true) {
-        this.setState({countAddFile: 0});
+        this.setState({countAddFile: 0});     
         this.setState({showListFile: !this.state.showListFile})
+    }
+
+    uploadNewFile(){
+        this.setState({files: []});
+        this.toggleShowListFile();
     }
 
     handleInit() {
@@ -86,16 +81,16 @@ export default class Home extends Component{
     handleProcessing(fieldName, file, metadata, load, error, progress, abort) {
     }
 
-    handleAddFile(error, file){
+    handleAddFile(error, file) {
         let countAddFile = this.state.countAddFile;
         countAddFile++;
         this.setState({countAddFile});
     }
 
     render(){
-        
+        console.log('Home render', this.state.files)
         return(
-            <div className="d-flex flex-column justify-content-center h-100 mt-5">
+            <div className="d-flex flex-column justify-content-center h-100 mt-5 p-5">
                 <div className="d-flex flex-column align-self-center">
                     <div className="title text-center">
                         <FontAwesomeIcon icon={["fas", "qrcode"]} color="#74b9ff" /> QR Box
@@ -112,7 +107,7 @@ export default class Home extends Component{
                         { !this.state.showListFile ?
                             
                             <FilePond   allowMultiple={true} 
-                                    maxFiles={3}
+                                    maxFiles={300}
                                     maxFileSize={'1024MB'}
                                     maxTotalFileSize={'1024MB'}
                                     acceptedFileTypes={['image/*', 'video/mp4', 'audio/*', 'application/pdf']}
@@ -142,7 +137,7 @@ export default class Home extends Component{
 
                         { (this.state.files.length > 0) && !this.state.showListFile ?
 
-                            <GetQRCodeBtn handleClick={this.getQRCodeClick} login={this.state.login} files={this.state.files} countAddFile={this.state.countAddFile}/>
+                            <GetQRCodeBtn handleClick={this.toggleShowListFile} login={this.state.login} files={this.state.files} countAddFile={this.state.countAddFile}/>
                         
                         : '' }
 
@@ -151,7 +146,12 @@ export default class Home extends Component{
 
             { this.state.showListFile ?
 
-                <ListFile files={this.state.files} uploadNewFile={true} toggleShowListFile={this.toggleShowListFile} removeFile={this.removeFile}/>
+                <div>
+                    <div className="text-center">
+                        <button className="btn btn-success mb-3 w-50" onClick={() => this.uploadNewFile()}><FontAwesomeIcon icon={["fas", "plus-circle"]} /> Upload New File</button>
+                    </div>
+                    <ListFile files={this.state.files}/>
+                </div>
 
             : ''}
 

@@ -15,85 +15,17 @@ export default class Files extends Component{
             finishLoading: false
         };
 
-        this.removeFile = this.removeFile.bind(this);
-        this.removeFiles = this.removeFiles.bind(this);
+        //this.setFiles = this.setFiles.bind(this);
     }
 
-    removeFiles(ids) {
-		Swal({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.value) {
-				for(let id of ids){
-					let login = this.state.login;
-					axios.post('api/file/delete', {id, login}).then((response) => {
-					if(response.status === 200){
-							let files = this.state.files;
-							files = files.filter((el) => (
-								el.fileId != id
-							))
-							this.setState({files})
-						}          
-					}).catch(function (error) {
-						Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error').then((result) => {
-                            if(result){
-                                location.reload(true);
-                            }
-                        })
-						return 0;
-					});
-				}
-				Swal(
-					'Deleted!',
-					'Your file has been deleted.',
-					'success'
-				)
-            }
-        })
-    }
-
-    removeFile(id) {
-        Swal({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.value) {
-                let login = this.state.login;
-                axios.post('api/file/delete', {id, login}).then((response) => {
-                if(response.status === 200){
-                        let files = this.state.files;
-                        files = files.filter((el) => (
-                            el.fileId != id
-                        ))
-                        this.setState({files})
-                        Swal(
-                            'Deleted!',
-                            'Your file has been deleted.',
-                            'success'
-                        )
-                    }          
-                }).catch(function (error) {
-                    Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error')
-                });
-            }
-        })
+    setFiles(files) {
+        console.log('setFiles', files);
+        this.setState({files});
     }
 
     componentDidMount() {
         axios.get('api/file/' + this.state.login).then((response) => {
             if(response.status === 200){
-                console.log(response)
                 this.setState({files: response.data, finishLoading: true})                                
             }
         }).catch(function (error) {
@@ -104,16 +36,20 @@ export default class Files extends Component{
 
     render(){
         return(
-            <div className="d-flex h-100 pl-5 pt-4 mt-3">
+            <div className="d-flex h-100 p-5 mt-3">
                 {
                     (this.state.finishLoading) ? 
-                        <ListFile files={this.state.files} shareSettingBtn={true} removeFile={this.removeFile} removeFiles={this.removeFiles}/> 
+                        <ListFile files={this.state.files} setting={{
+                            shareSettingBtn: true,
+                            removeAllBtn: true,
+                            searchBox: true,
+
+                        }}/>
                     :
                         <div className="d-flex flex-column align-self-center p-3">
                             <h1>Loading <FontAwesomeIcon icon={["fas", "sync"]} spin className="ml-1"/></h1>
                         </div>
                 }
-                
             </div>
         )
     }
