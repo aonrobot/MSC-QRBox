@@ -31,16 +31,20 @@ Route::group(['middleware' => ['auth', 'auth.admin'], 'prefix' => 'admin'], func
 
 });
 
+Route::group(['middleware' => ['auth', 'api']], function () {
+
+    //File
+    Route::prefix('file')->group(function () {
+        Route::get('{id}', 'fileController@show');
+    });
+
+});
+
 Route::group(['middleware' => ['auth']], function () {
 
 	//Service
     Route::prefix('services')->group(function () {
         Route::get('genqrcode/{id}', 'servicesController@genQrCode');
-    });
-
-    //File
-    Route::prefix('file')->group(function () {
-        Route::get('{id}', 'fileController@show');
     });
 
     //React Application

@@ -16,14 +16,7 @@
     </head>
     <body>
         <div id="main"></div>        
+        <script src="{{url('js/filepond-polyfill.min.js')}}"></script>        
         <script src="{{url(mix('js/app.js'))}}" ></script>
-        <script src="{{url('js/filepond-polyfill.min.js')}}"></script>
-        
-        <script>
-            // var pond = document.querySelector('.filepond--root');
-            // pond.addEventListener('FilePond:processfile', e => {
-            //     console.log('File processfile', e.detail.file);
-            // });
-        </script>
     </body>
 </html>

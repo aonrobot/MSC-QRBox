@@ -37,6 +37,7 @@ Route::middleware('api')->prefix('file')->group(function () {
     Route::get('{login}', 'fileController@index');
     Route::post('store', 'fileController@store');    
     Route::post('delete', 'fileController@destroy');
+    Route::post('update/{id}', 'fileController@update');
     
     Route::post('listfile/table', 'fileController@listFileTable');
 
