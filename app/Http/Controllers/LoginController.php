@@ -17,7 +17,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function do(Request $request) {
+    public function doLogin(Request $request) {
         
         $username = $request->input('username');    
         $password = $request->input('password');
@@ -33,7 +33,8 @@ class LoginController extends Controller
                 //Get user login from AD Attribute
                 $userLogin = $user->getAccountName();
                 Session::put('basic-auth', Crypt::encryptString($userLogin));
-                $userInfo = DB::connection('MSCMain')->table('EmployeeNew')->where('login', $userLogin)->first();
+
+                $userInfo = DB::connection('MSCMain')->table('EmployeeNew')->where('login', $userLogin)->first();   
 
                 //Check have user in EmployeeNew?
                 if(!empty($userInfo)){

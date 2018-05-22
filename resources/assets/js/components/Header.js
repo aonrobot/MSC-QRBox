@@ -51,6 +51,9 @@ export default class Header extends Component{
                         <li className="nav-item mr-2">
                             <Link className="nav-link text-primary" to="/files"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
                         </li>
+                        <li className="nav-item mr-2">
+                            <Link className="nav-link text-primary" to="/genqr"><FontAwesomeIcon className="mr-1" icon={["fas", "qrcode"]}/> QRCode</Link>
+                        </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="/terms"><FontAwesomeIcon className="mr-1" icon={["fas", "gavel"]}/> เงื่อนไขการใช้งาน</Link>
                         </li>

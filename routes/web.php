@@ -14,7 +14,7 @@
 // Auth
 Route::view('login', 'login')->name('login');
 Route::get('/logout', 'LoginController@logout')->name('logout');
-Route::post('/do.login', 'LoginController@do');
+Route::post('/do.login', 'LoginController@doLogin');
 
 //Share
 Route::prefix('share')->group(function () {
@@ -31,16 +31,20 @@ Route::group(['middleware' => ['auth', 'auth.admin'], 'prefix' => 'admin'], func
 
 });
 
+Route::group(['middleware' => ['auth', 'api']], function () {
+
+    //File
+    Route::prefix('file')->group(function () {
+        Route::get('{id}', 'fileController@show');
+    });
+
+});
+
 Route::group(['middleware' => ['auth']], function () {
 
 	//Service
     Route::prefix('services')->group(function () {
         Route::get('genqrcode/{id}', 'servicesController@genQrCode');
-    });
-
-    //File
-    Route::prefix('file')->group(function () {
-        Route::get('{id}', 'fileController@show');
     });
 
     //React Application

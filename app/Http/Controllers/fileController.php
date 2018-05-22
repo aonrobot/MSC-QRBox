@@ -10,6 +10,8 @@ use Storage;
 use Crypt;
 use Session;
 
+use Carbon\Carbon;
+
 use App\FileModel;
 
 class fileController extends Controller
@@ -218,6 +220,11 @@ class fileController extends Controller
         // Check only owener can see this file!!!
 
         $user_login = Session::get('basic-auth');
+
+        if($id == 'undefined') {
+            abort('404');
+        }
+
         $file_detail = FileModel::where('fileId', $id)->first();
         if(empty($file_detail)) abort('404');
 
@@ -265,6 +272,13 @@ class fileController extends Controller
         //
     }
 
+    private function getFileName($str){
+        return substr($str, 0, strrpos($str, '.'));
+    }
+    private function getFileExtension($str){
+        return substr($str, strrpos($str, '.') + 1);
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -274,7 +288,48 @@ class fileController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $newFile = $request->file('file_data');
+        $oldFile_id = $request->input('file_id');
+        $oldFilePath = $request->input('path');
+        $user_login = $request->input('login');
+        
+        try {
+            $public_folder_name = 'public/' . $user_login;
+            $oldFileName = str_replace($public_folder_name . '/', '', $oldFilePath);            
+            
+            if(strlen($user_login) > 0){
+
+                //Move old file to revison path
+                $revision_path = $public_folder_name . '/revision/' . explode('.', $oldFileName)[0] . '_' . Carbon::now()->timestamp . '.' . explode('.', $oldFileName)[1];
+                Storage::move($oldFilePath, $revision_path);
+
+                //Create new file
+                $newFileExtension = $request->file_data->extension();
+                $newFileName = explode('.', $oldFileName)[0] . '.' . $newFileExtension;
+                $newFilePath = $public_folder_name . '/' . $newFileName;
+                $newFileOriginalName = $request->file_data->getClientOriginalName();
+
+                Storage::putFileAs($public_folder_name, $newFile, $newFileName);
+                $newFileType = Storage::mimeType($newFilePath);
+
+                //Update Database
+                FileModel::where('fileId', $oldFile_id)->update([
+                    'serverId' => $newFilePath,
+                    'filename' => $newFileOriginalName,
+                    'filenameWithoutExtension' => $this->getFileName($newFileOriginalName),
+                    'fileType' => $newFileType,
+                    'fileExtension' => $newFileExtension,
+                    'updated_at' => Carbon::now()
+                ]);
+
+            }
+
+        } catch (DecryptException $e) {
+            return abort('404');
+        } 
+
+        
+
     }
 
     /**

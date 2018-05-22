@@ -19,7 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 //Service    
 Route::middleware('api')->prefix('services')->group(function () {
-    Route::get('genqrcode/{id}', 'servicesController@genQrCode');    
+    Route::get('genqrcode/{id}', 'servicesController@genQrCode');
+    Route::post('gencustomqrcode', 'servicesController@genCustomQrCode');    
 });
 
 //Employee
@@ -37,6 +38,7 @@ Route::middleware('api')->prefix('file')->group(function () {
     Route::get('{login}', 'fileController@index');
     Route::post('store', 'fileController@store');    
     Route::post('delete', 'fileController@destroy');
+    Route::post('update/{id}', 'fileController@update');
     
     Route::post('listfile/table', 'fileController@listFileTable');
 

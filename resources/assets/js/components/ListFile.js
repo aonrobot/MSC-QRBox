@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 
 import Util from '../library/Util';
+import ModalShareSetting from './ModalShareSetting';
+import ModalChangeFile from './ModalChangeFile';
 
 import 'datatables.net-bs4/js/dataTables.bootstrap4';
 import 'datatables.net-bs4/css/dataTables.bootstrap4.css';
@@ -27,31 +29,14 @@ export default class ListFile extends Component {
             rows: []
         }
 
-        this.oTable = null;
-
-        console.log('ListFile constructor')                
+        this.oTable = null;        
     }
 
-    componentWillMount () {
-        console.log('ListFile componentWillMount')                
-        
-    }
+    componentWillMount () {}
 
-    componentWillReceiveProps(nextProps){
-        console.log('ListFile WillReceiveProps', nextProps)
-        //this.setState({files : nextProps.files})
-    }
+    componentWillReceiveProps (nextProps){}
 
     componentDidMount () {
-        
-        /*let files = this.state.files;
-        
-        let data = [];
-        files.map((file)=>{
-            data.push({file})
-        })*/
-
-        console.log('ListFile Didmount')
 
         let $table = $(this.table);
         this.oTable = $table.DataTable({
@@ -83,66 +68,9 @@ export default class ListFile extends Component {
             this.oTable.search($searchBox.val()).draw();
         })
 
-        $('#shareSettingModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget)
-            var fileId = button.data('fileid')
-            var fileName = button.data('filename')             
-            var shareLink = button.data('shareLinkInput') 
-            var modal = $(this)
-
-            let appURL = document.head.querySelector('meta[name="app-url"]').content;
-            modal.find('#shareLinkInput').val(appURL + 'share/' + shareLink + '/' + fileName)
-
-            let checked;
-            let lableStatus;
-
-            axios.post('api/file/get/isShare', {id : fileId}).then((response) => {
-                if(response.status === 200){
-                    checked = (response.data.isShare === 1) ? true : false;
-                    lableStatus = (checked) ? 'Disable' : 'Enable';
-                    modal.find('#isChecked').prop('checked', checked);
-                    modal.find('#labelStatus').text(lableStatus);
-                    if(checked){
-                        modal.find('#shareLinkDiv').show() 
-                    }else{
-                        modal.find('#shareLinkDiv').hide() 
-                    }
-                }
-            });
-
-            modal.find('#isChecked').click(() => {
-                if(checked){
-                    axios.post('api/file/unshare', {id : fileId}).then((response) => {
-                        if(response.status === 200){
-                            Swal('Disable Sharing Success', '','success')
-                        }
-                    });
-                    checked = false;
-                    lableStatus = (checked) ? 'Disable' : 'Enable';
-                    modal.find('#labelStatus').text(lableStatus);    
-                    modal.find('#shareLinkDiv').hide()                
-                } else {
-                    axios.post('api/file/share', {id : fileId}).then((response) => {
-                        if(response.status === 200){
-                            Swal('Enable Sharing Success', '','success')
-                        }
-                    });
-                    checked = true;   
-                    lableStatus = (checked) ? 'Disable' : 'Enable';
-                    modal.find('#labelStatus').text(lableStatus);
-                    modal.find('#shareLinkDiv').show()                     
-                }
-            })
-            
-        })
-
-        $('#shareSettingModal').on('hidden.bs.modal', function (event) {
-            var modal = $(this)
-            modal.find('#isChecked').unbind('click');            
-        })
     }
 
-    removeFile(id, e) {
+    removeFile (id, e) {
         let row = $(e.target).parents('tr')
         Swal({
             title: 'Are you sure?',
@@ -174,13 +102,17 @@ export default class ListFile extends Component {
                     }          
                 }).catch(function (error) {
                     console.log(error)
-                    Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error');
+                    Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error').then((r) => {
+                        if(r){
+                            location.reload();
+                        }
+                    });
                 });
             }
         })
     }
 
-    removeFiles(ids, rows) {
+    removeFiles (ids, rows) {
 		Swal({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -200,11 +132,14 @@ export default class ListFile extends Component {
 								el.fileId != ids[index]
 							))
                             this.oTable.row(rows[index]).remove().draw();
-                            //this.props.setFiles(files);  
 						}          
 					}).catch(function (error) {
 						console.log(error)                        
-						Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error');
+						Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error').then((r) => {
+                            if(r){
+                                location.reload();
+                            }
+                        });
 					});
 				}
 
@@ -229,9 +164,9 @@ export default class ListFile extends Component {
         });
 
         if( checkedIds.length <= 0 ) {
-            //Alert Error 'No Item Select'
+            Swal('กรุณาเลือกอย่างน้อย 1 ไฟล์', '', 'error');
         } else {
-            this.removeFiles(checkedIds, checkedRows)
+            this.removeFiles(checkedIds, checkedRows);
         }
     }
 
@@ -262,11 +197,11 @@ export default class ListFile extends Component {
         }
     }
 
-    checkAllFile(){
+    checkAllFile () {
         $('input[name=chkBoxFile]').prop('checked', $('input[name=chkBoxAllFile]').prop('checked'));
     }
 
-    render(){
+    render () {
 
         // Why can't use this.state.files ??????
         // console.log('ListFile render (state files)', this.state.files)
@@ -290,6 +225,7 @@ export default class ListFile extends Component {
                         this.props.files.map((file) => {
                                 let fileId = (file.id === undefined) ? file.fileId : file.id;
                                 return (
+                                    //(file.shareLink === undefined) ? '' :
                                     <tr key={fileId}>
                                         <td>
                                             <input type="checkbox" name="chkBoxFile" value={fileId} />
@@ -306,27 +242,32 @@ export default class ListFile extends Component {
                                             {Util.capacityUnit(file.fileSize)}
                                         </td>
                                         <td>
-                                            <div className="dropdown show">
-                                                <a className="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </a>
-
-                                                <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                    <h6 className="dropdown-header">File Action</h6>
-                                                    <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} target={"_blank"}><FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code</a>
-                                                    <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} download><FontAwesomeIcon icon={["fas", "download"]} /> Download QR Code</a>  
-                                                    <div className="dropdown-divider"></div>
-                                                    {
-                                                        (this.state.setting.shareSettingBtn) ? 
-                                                            <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#shareSettingModal" data-fileid={fileId} data-sharelink={file.shareLink} data-filename={file.filename}><FontAwesomeIcon icon={["fas", "cog"]} /> Share File</button>
-                                                        : 
-                                                            ''
-                                                    }
-                                                    <button className="btn btn-warning ml-3 mb-3" data-toggle="modal" data-target="#modifyFileModal" data-fileid={fileId}> <FontAwesomeIcon icon={["fas", "exchange-alt"]} /> Change File</button>
-                                                    <div className="dropdown-divider"></div>
+                                            {
+                                                (this.state.setting.actionBtn) ? 
+                                                    <div className="dropdown show">
+                                                        <a className="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Action
+                                                        </a>
+                                                        <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                            <h6 className="dropdown-header">File Action</h6>
+                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} target={"_blank"}><FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code</a>
+                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} download><FontAwesomeIcon icon={["fas", "download"]} /> Download QR Code</a>  
+                                                            <div className="dropdown-divider"></div>
+                                                            {
+                                                                (this.state.setting.shareSettingBtn) ? 
+                                                                    <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#shareSettingModal" data-fileid={fileId} data-sharelink={file.shareLink} data-filename={file.filename}><FontAwesomeIcon icon={["fas", "cog"]} /> Share File</button>
+                                                                : 
+                                                                    ''
+                                                            }
+                                                            <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#changeFileModal" data-login={file.loginUser}  data-fileid={fileId} data-serverid={file.serverId} data-filename={file.filename}> <FontAwesomeIcon icon={["fas", "exchange-alt"]} /> Change File</button>
+                                                            <div className="dropdown-divider"></div>
+                                                            <button className="btn btn-danger ml-3" onClick={(e) => this.removeFile(fileId, e)}><FontAwesomeIcon icon={["fas", "trash-alt"]} /> Delete</button>
+                                                        </div>
+                                                    </div>
+                                                :
                                                     <button className="btn btn-danger ml-3" onClick={(e) => this.removeFile(fileId, e)}><FontAwesomeIcon icon={["fas", "trash-alt"]} /> Delete</button>
-                                                </div>
-                                            </div>
+                                            }
+                                            
                                         </td>
                                     </tr>
                                 )
@@ -387,46 +328,8 @@ export default class ListFile extends Component {
 
                 { showTable }
 
-                <div className="modal fade" id="shareSettingModal" tabIndex="-1" role="dialog" aria-labelledby="shareSettingModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="shareSettingModalLabel"><FontAwesomeIcon icon={["fas", "cog"]} /> Share Setting</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <h5><span id="labelStatus"></span> Sharing File</h5>
-                                        <label className="switch">
-                                            <input id={"isChecked"} type="checkbox"/>
-                                            <span className="slider round"></span>
-                                        </label>
-                                    </div>
-                                    <div className="col-md-12" id="shareLinkDiv">
-                                        <h5><span id="labelStatus"></span> Share Link</h5>
-                                        <div className="input-group">
-                                            <div className="input-group-prepend">
-                                                <button className="btn btn-secondary" onClick={() => {
-                                                    this.refs.shareLinkInput.select();
-                                                    document.execCommand("Copy");
-                                                    Swal('Copied!!','Copy link to Clipboard success','success')
-                                                }} data-toggle="tooltip" data-placement="top" title="Copy Link To Clipboard"><FontAwesomeIcon icon={["fas", "copy"]} /> Copy</button>
-                                            </div>
-                                            <input type="text" className="form-control" ref="shareLinkInput" id="shareLinkInput" onClick={(event) => {event.target.select()}}/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                {/*<button type="button" className="btn btn-primary" onClick={() => alert('Share Setting Modal')}>Save changes</button>*/}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ModalShareSetting/>
+                <ModalChangeFile login={this.state.login} token={this.state.token}/>
             </div>
         )
     }

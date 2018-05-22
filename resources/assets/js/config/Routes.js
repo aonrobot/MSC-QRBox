@@ -18,6 +18,7 @@ import Footer from '../components/Footer';
 //Pages
 import Home from '../components/pages/Home';
 import Files from '../components/pages/Files';
+import Genqr from '../components/pages/Genqr';
 import Terms from '../components/pages/Terms';
 
 fontawesome.library.add(regular, brands, solids);
@@ -28,6 +29,7 @@ const Routes = () => (
             <Header />
             <Route exact path="/" component={Home} />
             <Route path="/files" component={Files} />
+            <Route path="/genqr" component={Genqr} />
             <Route path="/terms" component={Terms} />
             {/*<Footer />*/}         
         </div>
