@@ -41,6 +41,7 @@
     "filepond-plugin-file-validate-type": "^1.0.3",
     "filepond-plugin-image-preview": "^1.0.5",
     "history": "^4.7.2",
+    "localforage": "^1.7.1",
     "moment": "^2.22.1",
     "react-document-meta": "^3.0.0-beta.2",
     "react-filepond": "^1.2.0",

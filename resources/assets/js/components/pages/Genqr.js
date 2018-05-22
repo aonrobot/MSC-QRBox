@@ -14,6 +14,10 @@ export default class Genqr extends Component{
         };
     }
 
+    componentDidMount(){
+        let that = this;
+    }
+
     handleChange(event) {
         this.setState({loading: true})
         let link = event.target.value;
