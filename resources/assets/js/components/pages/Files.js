@@ -43,6 +43,7 @@ export default class Files extends Component{
                             shareSettingBtn: true,
                             removeAllBtn: true,
                             searchBox: true,
+                            actionBtn: true
 
                         }}/>
                     :

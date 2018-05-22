@@ -18,6 +18,15 @@ class servicesController extends Controller
         $response = Response::make(QrCode::format('png')->merge('/public/images/msc10.png', .15)->size(500)->generate(env('APP_URL') . 'share/' . $id), 200);
         $response->header("Content-Type", "image/png");
         return $response;
+    }
+    
+    public function genCustomQrCode(Request $request){
+        $url = $request->input('url');
+        if(empty($url)) return '';
+        //$url = $request->input('url');
+        $response = base64_encode(QrCode::format('png')->merge('/public/images/msc10.png', .15)->size(500)->generate($url));
+        //$response->header("Content-Type", "image/png");
+        return $response;
     }    
 
     /**

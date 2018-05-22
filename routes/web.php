@@ -14,7 +14,7 @@
 // Auth
 Route::view('login', 'login')->name('login');
 Route::get('/logout', 'LoginController@logout')->name('logout');
-Route::post('/do.login', 'LoginController@do');
+Route::post('/do.login', 'LoginController@doLogin');
 
 //Share
 Route::prefix('share')->group(function () {

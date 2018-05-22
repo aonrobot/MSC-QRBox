@@ -18,7 +18,7 @@ class MemberController extends Controller
     public function index()
     {
         $members = DB::select("SELECT * FROM QRBox.dbo.member as m JOIN MSCMain.dbo.EmployeeNew as en ON m.loginUser = en.Login WHERE WorkingStatus = 1 AND memberId != '1' ORDER BY created_at ASC");
-        $employees = DB::select("SELECT * FROM MSCMain.dbo.EmployeeNew as en LEFT JOIN QRBox.dbo.member as m ON en.Login = m.loginUser WHERE m.loginUser IS NULL ORDER BY en.EmpCode ASC");
+        $employees = DB::select("SELECT * FROM MSCMain.dbo.EmployeeNew as en LEFT JOIN QRBox.dbo.member as m ON en.Login = m.loginUser WHERE m.loginUser IS NULL AND Login <> '_X' AND Login <> '' ORDER BY en.EmpCode ASC");
         
         return view('admin.pages.user.index', ['members' => $members, 'employees' => $employees]);
     }

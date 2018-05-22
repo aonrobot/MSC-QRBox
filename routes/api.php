@@ -19,7 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 //Service    
 Route::middleware('api')->prefix('services')->group(function () {
-    Route::get('genqrcode/{id}', 'servicesController@genQrCode');    
+    Route::get('genqrcode/{id}', 'servicesController@genQrCode');
+    Route::post('gencustomqrcode', 'servicesController@genCustomQrCode');    
 });
 
 //Employee

@@ -225,7 +225,7 @@ export default class ListFile extends Component {
                         this.props.files.map((file) => {
                                 let fileId = (file.id === undefined) ? file.fileId : file.id;
                                 return (
-                                    (file.shareLink === undefined) ? '' :
+                                    //(file.shareLink === undefined) ? '' :
                                     <tr key={fileId}>
                                         <td>
                                             <input type="checkbox" name="chkBoxFile" value={fileId} />
@@ -242,27 +242,32 @@ export default class ListFile extends Component {
                                             {Util.capacityUnit(file.fileSize)}
                                         </td>
                                         <td>
-                                            <div className="dropdown show">
-                                                <a className="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    Action
-                                                </a>
-
-                                                <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                    <h6 className="dropdown-header">File Action</h6>
-                                                    <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} target={"_blank"}><FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code</a>
-                                                    <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} download><FontAwesomeIcon icon={["fas", "download"]} /> Download QR Code</a>  
-                                                    <div className="dropdown-divider"></div>
-                                                    {
-                                                        (this.state.setting.shareSettingBtn) ? 
-                                                            <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#shareSettingModal" data-fileid={fileId} data-sharelink={file.shareLink} data-filename={file.filename}><FontAwesomeIcon icon={["fas", "cog"]} /> Share File</button>
-                                                        : 
-                                                            ''
-                                                    }
-                                                    <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#changeFileModal" data-login={file.loginUser}  data-fileid={fileId} data-serverid={file.serverId} data-filename={file.filename}> <FontAwesomeIcon icon={["fas", "exchange-alt"]} /> Change File</button>
-                                                    <div className="dropdown-divider"></div>
+                                            {
+                                                (this.state.setting.actionBtn) ? 
+                                                    <div className="dropdown show">
+                                                        <a className="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Action
+                                                        </a>
+                                                        <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                            <h6 className="dropdown-header">File Action</h6>
+                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} target={"_blank"}><FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code</a>
+                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} download><FontAwesomeIcon icon={["fas", "download"]} /> Download QR Code</a>  
+                                                            <div className="dropdown-divider"></div>
+                                                            {
+                                                                (this.state.setting.shareSettingBtn) ? 
+                                                                    <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#shareSettingModal" data-fileid={fileId} data-sharelink={file.shareLink} data-filename={file.filename}><FontAwesomeIcon icon={["fas", "cog"]} /> Share File</button>
+                                                                : 
+                                                                    ''
+                                                            }
+                                                            <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#changeFileModal" data-login={file.loginUser}  data-fileid={fileId} data-serverid={file.serverId} data-filename={file.filename}> <FontAwesomeIcon icon={["fas", "exchange-alt"]} /> Change File</button>
+                                                            <div className="dropdown-divider"></div>
+                                                            <button className="btn btn-danger ml-3" onClick={(e) => this.removeFile(fileId, e)}><FontAwesomeIcon icon={["fas", "trash-alt"]} /> Delete</button>
+                                                        </div>
+                                                    </div>
+                                                :
                                                     <button className="btn btn-danger ml-3" onClick={(e) => this.removeFile(fileId, e)}><FontAwesomeIcon icon={["fas", "trash-alt"]} /> Delete</button>
-                                                </div>
-                                            </div>
+                                            }
+                                            
                                         </td>
                                     </tr>
                                 )

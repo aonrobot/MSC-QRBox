@@ -150,7 +150,9 @@ export default class Home extends Component{
                     <div className="text-center">
                         <button className="btn btn-success mb-3 w-50" onClick={() => this.uploadNewFile()}><FontAwesomeIcon icon={["fas", "plus-circle"]} /> Upload New File</button>
                     </div>
-                    <ListFile files={this.state.files}/>
+                    <ListFile files={this.state.files} setting={{
+                            removeAllBtn: true,
+                        }}/>
                 </div>
 
             : ''}
