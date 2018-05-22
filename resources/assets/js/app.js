@@ -1,4 +1,4 @@
-import afterUpload from './controller/afterUpload';
+import PrepairDB from './controller/PrepairDB';
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -16,6 +16,6 @@ require('./bootstrap');
 
 require('./config/Routes');
 
-require('./controller/afterUpload');
+//require('./controller/afterUpload');
 
-new afterUpload();
+new PrepairDB();

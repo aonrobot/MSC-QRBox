@@ -23,13 +23,14 @@ export default class Header extends Component{
     }
 
     componentDidMount(){
-        let login = document.head.querySelector('meta[name="basic-auth"]').content;
-        axios.get('api/employee/info/' + login).then(response => {
-            this.setState({userInfo : response.data[0]});
+        let that = this;
+
+        localforage.getItem('userInfo', function(err, value) {
+            that.setState({userInfo : value});
         });
 
-        axios.get('api/employee/isAdmin/' + login).then(response => {
-            this.setState({isAdmin : response.data});
+        localforage.getItem('isAdmin', function(err, value) {
+            that.setState({isAdmin : value});
         });
 
         window.addEventListener('beforeunload', this.keepOnPage);
