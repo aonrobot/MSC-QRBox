@@ -22,7 +22,6 @@ export default class ModalChangeFile extends Component {
             
             var fileId = button.data('fileid')
             var fileName = button.data('filename')             
-            var serverid = button.data('serverid')
             var modal = $(this)
 
             let changeBtn = modal.find('#changeBtn');
@@ -32,7 +31,6 @@ export default class ModalChangeFile extends Component {
                 let fd = new FormData();
                 fd.append('file_data', file_data[0]);
                 fd.append('file_id', fileId);
-                fd.append('path', serverid)
                 fd.append('login', login)
                 axios.post('api/file/update/' + fileId, fd, config).then((response) => {
                     if(response.status === 200){
@@ -41,10 +39,14 @@ export default class ModalChangeFile extends Component {
                                 location.reload();
                             }
                         })
-                    }else{
-                        Swal('ไม่สามารถเปลี่ยนไฟล์ได้', '','error')                        
                     }
-                });
+                }).catch(function (error) {
+                    Swal('ไม่สามารถเปลี่ยนไฟล์ได้', 'เนื่องจากคุณไม่มีสิทธิ์ในการเปลี่ยนแปลงไฟล์นี้ กรุณาติดต่อ MIS','error').then((r) => {
+                        if(r){
+                            location.reload();
+                        }
+                    });
+                });;
             })
                     
         })

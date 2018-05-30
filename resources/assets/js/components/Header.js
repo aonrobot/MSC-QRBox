@@ -23,20 +23,21 @@ export default class Header extends Component{
     }
 
     componentDidMount(){
-        let that = this;
 
-        localforage.getItem('userInfo', function(err, value) {
-            that.setState({userInfo : value});
+        let login = document.head.querySelector('meta[name="basic-auth"]').content;
+        axios.get('api/employee/info/' + login).then(response => {
+            this.setState({userInfo : response.data[0]});
         });
 
-        localforage.getItem('isAdmin', function(err, value) {
-            that.setState({isAdmin : value});
-        });
+        axios.get('api/employee/isAdmin/' + login).then(response => {
+            this.setState({isAdmin : response.data});
+        });  
 
         window.addEventListener('beforeunload', this.keepOnPage);
     }
     
     render(){
+        console.log('render')        
         return(
             <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top box-shadow p-3 px-md-4">
                 <a className="navbar-brand" href="/qrbox"><FontAwesomeIcon icon={["fas", "qrcode"]} color="#d6d6d6" size="2x"/></a>

@@ -61,7 +61,7 @@
                         <input type="password" id="inputPassword" name="password" class="form-control mb-3" placeholder="Password" required="">
                     </div>
 
-                    <button class="btn btn-outline-secondary btn-block" type="button" data-toggle="modal" data-target="#registerSoonModal"><i class="fas fa-registered mr-1"></i> มาสมัครใช้งานกัน</button>
+                    <!--<button class="btn btn-outline-secondary btn-block" type="button" data-toggle="modal" data-target="#registerSoonModal"><i class="fas fa-registered mr-1"></i> มาสมัครใช้งานกัน</button>-->
 
                     <button class="btn btn-lg btn-primary btn-block" type="submit"><i class="fas fa-sign-in-alt mr-1"></i> <small>Login</small> เข้าใช้งาน</button>
 

@@ -15,7 +15,7 @@ use App\FileModel;
 class ShareController extends Controller
 {
 
-    public function show($id){
+    public function show($id, $name = ""){
 
         $shareId = substr(base64_decode($id) ,0 ,9);
 
@@ -23,6 +23,10 @@ class ShareController extends Controller
 
         if(count($file_detail) === 0 || !$file_detail->isShare){
             return view('errors.404-NotShare');
+        }
+
+        if($name != "" && $name != $file_detail->filename){
+            return redirect('/share/' . $file_detail->shareLink . '/' . $file_detail->filename);
         }
 
         // find path(filename with extension) by id from DB

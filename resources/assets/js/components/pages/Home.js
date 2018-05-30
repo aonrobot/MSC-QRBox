@@ -31,7 +31,8 @@ export default class Home extends Component{
             showListFile: false
         };
 
-        this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
+        this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>\
+        <br> ไฟล์ที่รองรับ : ไฟล์รูปทุกชนิด, วีดีโอทุกชนิด, เสียงทุกชนิด, PDF, เอกสาร Microsoft Office (doc, xls, ppt), text file (txt, html)';
 
         this.toggleShowListFile = this.toggleShowListFile.bind(this);
         //this.setFiles = this.setFiles.bind(this);
@@ -97,12 +98,6 @@ export default class Home extends Component{
                     </div>
                     <div className="links text-center">
                         <p className="mb-5">By <span className="color-w-primary">Metrosystems</span> Cop. PCL.</p>
-
-                        { (this.state.files.length > 0) && !this.state.showListFile ?
-
-                            <GetQRCodeBtn handleClick={this.toggleShowListFile} login={this.state.login} files={this.state.files} countAddFile={this.state.countAddFile}/>
-
-                        : ''}
                         
                         { !this.state.showListFile ?
                             
@@ -110,7 +105,23 @@ export default class Home extends Component{
                                     maxFiles={300}
                                     maxFileSize={'1024MB'}
                                     maxTotalFileSize={'1024MB'}
-                                    acceptedFileTypes={['image/*', 'video/mp4', 'audio/*', 'application/pdf']}
+                                    acceptedFileTypes={
+                                        [
+                                            'image/*',
+                                            'video/mp4',
+                                            'audio/*',
+                                            'text/plain',
+                                            'text/html',  
+                                            'application/pdf',
+                                            'application/msword',
+                                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                            'application/vnd.ms-excel',
+                                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                            'application/vnd.ms-powerpoint',
+                                            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                                            'application/vnd.ms-access'
+                                        ]
+                                    }
                                     ref={ref => this.pond = ref}
                                     server={{
                                         url: 'api/uploadBox',
@@ -144,18 +155,18 @@ export default class Home extends Component{
                     </div>
                 </div>
 
-            { this.state.showListFile ?
+                { this.state.showListFile ?
 
-                <div>
-                    <div className="text-center">
-                        <button className="btn btn-success mb-3 w-50" onClick={() => this.uploadNewFile()}><FontAwesomeIcon icon={["fas", "plus-circle"]} /> Upload New File</button>
+                    <div>
+                        <div className="text-center">
+                            <button className="btn btn-success mb-3 w-50" onClick={() => this.uploadNewFile()}><FontAwesomeIcon icon={["fas", "plus-circle"]} /> Upload New File</button>
+                        </div>
+                        <ListFile files={this.state.files} setting={{
+                                removeAllBtn: true,
+                            }}/>
                     </div>
-                    <ListFile files={this.state.files} setting={{
-                            removeAllBtn: true,
-                        }}/>
-                </div>
 
-            : ''}
+                : ''}
 
             </div>
         )
