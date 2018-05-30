@@ -31,7 +31,8 @@ export default class Home extends Component{
             showListFile: false
         };
 
-        this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>';
+        this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>\
+        <br> ไฟล์ที่รองรับ : ไฟล์รูปทุกชนิด, วีดีโอทุกชนิด, เสียงทุกชนิด, PDF, เอกสาร Microsoft Office (doc, xls, ppt), text file (txt, html)';
 
         this.toggleShowListFile = this.toggleShowListFile.bind(this);
         //this.setFiles = this.setFiles.bind(this);

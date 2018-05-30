@@ -25,6 +25,7 @@ export default class Terms extends Component{
                             <li>สามารถ upload ได้ครั้งละ 3 ไฟล์</li>
                             <li>แต่ละไฟล์ต้องมีขนาดไม่เกิน 1Gb</li>
                             <li>และขนาดไฟล์รวมทั้งหมด 3 ไฟล์ต้องไม่เกิน 1Gb</li>
+                            <li>ไฟล์ที่รองรับ : ไฟล์รูปทุกชนิด, วีดีโอทุกชนิด, เสียงทุกชนิด, PDF, เอกสาร Microsoft Office (doc, xls, ppt), text file (txt, html)</li>
                         </ul>
                     </div>
                     <p className="lead mt-5">
