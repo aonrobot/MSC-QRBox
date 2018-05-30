@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth']], function () {
 	//Service
     Route::prefix('services')->group(function () {
         Route::get('genqrcode/{id}', 'servicesController@genQrCode');
+        Route::get('genqrcode/{id}/{filename}', 'servicesController@genQrCodeWithFileName');       
     });
 
     //React Application

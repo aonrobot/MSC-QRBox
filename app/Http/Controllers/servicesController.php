@@ -19,7 +19,14 @@ class servicesController extends Controller
         $response->header("Content-Type", "image/png");
         return $response;
     }
-    
+
+    public function genQrCodeWithFileName($id, $filename){
+        //$url = $request->input('url');
+        $response = Response::make(QrCode::format('png')->merge('/public/images/msc10.png', .15)->size(500)->generate(env('APP_URL') . 'share/' . $id . '/' . $filename), 200);
+        $response->header("Content-Type", "image/png");
+        return $response;
+    }
+
     public function genCustomQrCode(Request $request){
         $url = $request->input('url');
         if(empty($url)) return '';

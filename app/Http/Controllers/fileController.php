@@ -290,13 +290,16 @@ class fileController extends Controller
     {
         $newFile = $request->file('file_data');
         $oldFile_id = $request->input('file_id');
-        $oldFilePath = $request->input('path');
         $user_login = $request->input('login');
+
+        $public_folder_name = 'public/' . $user_login;
+
+        $oldFileDetail = FileModel::where('fileId', $oldFile_id)->first();
+        $oldFileName = $oldFileDetail->nameId . '.' . $oldFileDetail->fileExtension;                    
+        $oldFilePath = $public_folder_name . '/' . $oldFileName;
         
         try {
-            $public_folder_name = 'public/' . $user_login;
-            $oldFileName = str_replace($public_folder_name . '/', '', $oldFilePath);            
-            
+                       
             if(strlen($user_login) > 0){
 
                 //Move old file to revison path

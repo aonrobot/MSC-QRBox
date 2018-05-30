@@ -84,7 +84,7 @@ export default class ListFile extends Component {
             if (result.value) {
                 let login = this.state.login;
                 axios.post('api/file/delete', {id, login}).then((response) => {
-                if(response.status === 200){
+                    if(response.status === 200){
                         // Why can't use this.state.files ??????
                         let files = this.props.files;
                         files = (files[0].id == undefined) ? files.filter((el) => (el.fileId != id)) : files.filter((el) => (el.id != id));
@@ -239,7 +239,7 @@ export default class ListFile extends Component {
                                             </h6>
                                         </td>
                                         <td>
-                                            {Util.capacityUnit(file.fileSize)}
+                                            { (file.fileSize !== undefined || file.fileSize !== null) ?  Util.capacityUnit(file.fileSize) : ''}
                                         </td>
                                         <td>
                                             {
@@ -250,8 +250,8 @@ export default class ListFile extends Component {
                                                         </a>
                                                         <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                             <h6 className="dropdown-header">File Action</h6>
-                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} target={"_blank"}><FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code</a>
-                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink} download><FontAwesomeIcon icon={["fas", "download"]} /> Download QR Code</a>  
+                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink + '/' + file.filename} target={"_blank"}><FontAwesomeIcon icon={["fas", "eye"]} /> View QR Code</a>
+                                                            <a className="dropdown-item" href={"services/genqrcode/" + file.shareLink + '/' + file.filename} download><FontAwesomeIcon icon={["fas", "download"]} /> Download QR Code</a>  
                                                             <div className="dropdown-divider"></div>
                                                             {
                                                                 (this.state.setting.shareSettingBtn) ? 
@@ -259,7 +259,7 @@ export default class ListFile extends Component {
                                                                 : 
                                                                     ''
                                                             }
-                                                            <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#changeFileModal" data-login={file.loginUser}  data-fileid={fileId} data-serverid={file.serverId} data-filename={file.filename}> <FontAwesomeIcon icon={["fas", "exchange-alt"]} /> Change File</button>
+                                                            <button className="btn btn-light ml-3 mb-3" data-toggle="modal" data-target="#changeFileModal" data-login={file.loginUser}  data-fileid={fileId} data-filename={file.filename}> <FontAwesomeIcon icon={["fas", "exchange-alt"]} /> Change File</button>
                                                             <div className="dropdown-divider"></div>
                                                             <button className="btn btn-danger ml-3" onClick={(e) => this.removeFile(fileId, e)}><FontAwesomeIcon icon={["fas", "trash-alt"]} /> Delete</button>
                                                         </div>

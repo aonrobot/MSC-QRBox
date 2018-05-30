@@ -40,6 +40,7 @@ class uploadController extends Controller
         $user_login = $request->header('BASIC-AUTH');
 
         $allowType = explode(',', env('ALLOW_FILE_TYPE'));
+        $allowType = explode('\'', env('ALLOW_FILE_TYPE'));
         $mimeType = $request->file('filepond')->getMimeType();
         $fileSize = $request->file('filepond')->getSize() / 1024 / 1024;
         
