@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth', 'api']], function () {
 
     //File
     Route::prefix('file')->group(function () {
-        Route::get('{id}', 'fileController@show');
+        Route::get('{id}/{name?}', 'fileController@show');
     });
 
 });

@@ -51,7 +51,7 @@ export default class Header extends Component{
                             <Link className="nav-link text-success" to="/"><FontAwesomeIcon className="mr-1" icon={["fas", "cloud-upload-alt"]}/> Upload<span className="sr-only">(current)</span></Link>
                         </li>
                         <li className="nav-item mr-2">
-                            <Link className="nav-link text-primary" to="/files"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
+                            <Link className="nav-link text-primary" to="/myfile"><FontAwesomeIcon className="mr-1" icon={["fas", "file-alt"]}/> My Files</Link>
                         </li>
                         <li className="nav-item mr-2">
                             <Link className="nav-link text-primary" to="/genqr"><FontAwesomeIcon className="mr-1" icon={["fas", "qrcode"]}/> QRCode</Link>

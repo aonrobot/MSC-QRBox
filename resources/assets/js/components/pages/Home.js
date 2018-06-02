@@ -33,6 +33,10 @@ export default class Home extends Component{
 
         this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>\
         <br> ไฟล์ที่รองรับ : ไฟล์รูปทุกชนิด, วีดีโอทุกชนิด, เสียงทุกชนิด, PDF, เอกสาร Microsoft Office (doc, xls, ppt), text file (txt, html)';
+        
+        this.iconCancel = '<svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">\
+        <path d="M11.586 13l-2.293 2.293a1 1 0 0 0 1.414 1.414L13 14.414l2.293 2.293a1 1 0 0 0 1.414-1.414L14.414 13l2.293-2.293a1 1 0 0 0-1.414-1.414L13 11.586l-2.293-2.293a1 1 0 0 0-1.414 1.414L11.586 13z"\
+         fill="currentColor" fill-rule="nonzero"></path></svg>'
 
         this.toggleShowListFile = this.toggleShowListFile.bind(this);
         //this.setFiles = this.setFiles.bind(this);
@@ -101,8 +105,9 @@ export default class Home extends Component{
                         
                         { !this.state.showListFile ?
                             
-                            <FilePond   allowMultiple={true} 
-                                    maxFiles={300}
+                            <FilePond 
+                                    allowMultiple={true} 
+                                    maxFiles={3}
                                     maxFileSize={'1024MB'}
                                     maxTotalFileSize={'1024MB'}
                                     acceptedFileTypes={
@@ -139,6 +144,8 @@ export default class Home extends Component{
                                         }
                                     }}
                                     labelIdle={this.uploadUIlabel}
+                                    iconUndo={this.iconCancel}
+                                    labelButtonUndoItemProcessing={'Cancel'}
                                     instantUpload={true}
                                     onaddfile={(error, file) => this.handleAddFile(error, file)}
                                     oninit={() => this.handleInit()}

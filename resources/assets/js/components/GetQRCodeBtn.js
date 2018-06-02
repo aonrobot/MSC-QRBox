@@ -1,8 +1,15 @@
 import React, {Component} from 'react';
-
+import { Redirect } from "react-router-dom";
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 
 export default class GetQRCodeBtn extends Component{
+
+    constructor(props){
+        super(props);
+        this.state = {
+            redirect : false
+        }
+    }
 
     saveFile(){
         let login = this.props.login;
@@ -31,7 +38,9 @@ export default class GetQRCodeBtn extends Component{
                 console.log(response);
                 if(response.status === 200){
                     Swal('สร้าง QR Code สำเร็จ', 'คุณสามารถ Share QR Code ของคุณได้เลย :)', 'success');                
-                    this.props.handleClick();
+                    //this.props.handleClick();
+                    //return <Redirect to='/myfile'/>;
+                    this.setState({redirect : true})
                 }
             })
         }        
@@ -39,7 +48,14 @@ export default class GetQRCodeBtn extends Component{
 
     render(){
         return(
-            <button className="btn btn-success btn-lg btn-block mb-3" onClick={() => this.saveFile()}>Get QR Code <FontAwesomeIcon icon={["fas", "qrcode"]} /></button>
+            <div>
+                {
+                    (!this.state.redirect) ?
+                        <button className="btn btn-success btn-lg btn-block mb-3" onClick={() => this.saveFile()}>Get QR Code <FontAwesomeIcon icon={["fas", "qrcode"]} /></button>            
+                    :
+                        <Redirect to='/myfile'/>    
+                }
+            </div>
         )
     }
 }
