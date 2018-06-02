@@ -215,7 +215,7 @@ class fileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, $name = "")
     {
         // Check only owener can see this file!!!
 
@@ -226,7 +226,11 @@ class fileController extends Controller
         }
 
         $file_detail = FileModel::where('fileId', $id)->first();
-        if(empty($file_detail)) abort('404');
+
+        if(empty($file_detail) || count($file_detail) === 0) abort('404');
+        if($name != "" && $name != $file_detail->filename){
+            return redirect('/file/' . $file_detail->fileId . '/' . $file_detail->filename);
+        }
 
         $file_login = $file_detail->loginUser;        
 

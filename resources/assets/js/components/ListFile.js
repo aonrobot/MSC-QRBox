@@ -231,7 +231,7 @@ export default class ListFile extends Component {
                                             <input type="checkbox" name="chkBoxFile" value={fileId} />
                                         </td>                                                        
                                         <td>
-                                            <a href={"file/" + fileId} target="_blank" src={file.filename}>
+                                            <a href={"file/" + fileId + '/' + file.filename} target="_blank" src={file.filename}>
                                                 {file.filename} 
                                             </a><br/>
                                             <h6>

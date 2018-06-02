@@ -28,7 +28,7 @@ const Routes = () => (
         <div>
             <Header />
             <Route exact path="/" component={Home} />
-            <Route path="/files" component={Files} />
+            <Route path="/myfile" component={Files} />
             <Route path="/genqr" component={Genqr} />
             <Route path="/terms" component={Terms} />
             {/*<Footer />*/}         
