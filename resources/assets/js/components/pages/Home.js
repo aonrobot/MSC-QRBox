@@ -28,7 +28,8 @@ export default class Home extends Component{
 
             files: [],
             countAddFile: 0,
-            showListFile: false
+            showListFile: false,
+            finishUpload: false
         };
 
         this.uploadUIlabel = 'Drag & Drop ไฟล์ของคุณ <b>(3 ไฟล์)</b> ลงตรงพื้นที่สีเทา หรือ <span class="badge badge-pill badge-primary filepond--label-action"> กด Browse ที่นี่ </span>\
@@ -36,7 +37,10 @@ export default class Home extends Component{
         
         this.iconCancel = '<svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">\
         <path d="M11.586 13l-2.293 2.293a1 1 0 0 0 1.414 1.414L13 14.414l2.293 2.293a1 1 0 0 0 1.414-1.414L14.414 13l2.293-2.293a1 1 0 0 0-1.414-1.414L13 11.586l-2.293-2.293a1 1 0 0 0-1.414 1.414L11.586 13z"\
-         fill="currentColor" fill-rule="nonzero"></path></svg>'
+         fill="currentColor" fill-rule="nonzero"></path></svg>';
+
+        this.countAllFile = 0;
+        this.finishUpload = false;
 
         this.toggleShowListFile = this.toggleShowListFile.bind(this);
         //this.setFiles = this.setFiles.bind(this);
@@ -70,8 +74,10 @@ export default class Home extends Component{
             this.setState({files})
             //this.pond._pond.removeFile(file.id)
             //this.divShowQRCode.scrollIntoView({ behavior: "smooth", block: "start" });
-            this.setState({countAddFile: this.state.countAddFile++});
-            console.log(file, this.state.countAddFile)            
+            //this.setState({countAddFile: this.state.countAddFile++});
+            this.countAllFile++
+            if(this.state.countAddFile == this.countAllFile) this.setState({finishUpload: true})
+            console.log(this.state.countAddFile, this.countAllFile, this.finishUpload)
         });
         
         this.pond._pond.on('removefile', (file) => {             
@@ -83,8 +89,7 @@ export default class Home extends Component{
         });
     }
 
-    handleProcessing(fieldName, file, metadata, load, error, progress, abort) {
-    }
+    handleProcessing(fieldName, file, metadata, load, error, progress, abort) {}
 
     handleAddFile(error, file) {
         let countAddFile = this.state.countAddFile;
@@ -93,7 +98,7 @@ export default class Home extends Component{
     }
 
     render(){
-        console.log('Home render', this.state.files)
+        //console.log('Home render', this.state.files)
         return(
             <div className="d-flex flex-column justify-content-center h-100 mt-5 p-5">
                 <div className="d-flex flex-column align-self-center">
@@ -106,11 +111,11 @@ export default class Home extends Component{
                         { !this.state.showListFile ?
                             
                             <FilePond 
-                                    allowMultiple={true} 
-                                    maxFiles={3}
-                                    maxFileSize={'1024MB'}
-                                    maxTotalFileSize={'1024MB'}
-                                    acceptedFileTypes={
+                                    allowMultiple = {true} 
+                                    maxFiles = {3}
+                                    maxFileSize = {'1024MB'}
+                                    maxTotalFileSize = {'1024MB'}
+                                    acceptedFileTypes = {
                                         [
                                             'image/*',
                                             'video/mp4',
@@ -127,8 +132,8 @@ export default class Home extends Component{
                                             'application/vnd.ms-access'
                                         ]
                                     }
-                                    ref={ref => this.pond = ref}
-                                    server={{
+                                    ref = {ref => this.pond = ref}
+                                    server ={ {
                                         url: 'api/uploadBox',
                                         process: {
                                             headers: {
@@ -143,17 +148,17 @@ export default class Home extends Component{
                                             }
                                         }
                                     }}
-                                    labelIdle={this.uploadUIlabel}
-                                    iconUndo={this.iconCancel}
-                                    labelButtonUndoItemProcessing={'Cancel'}
-                                    instantUpload={true}
-                                    onaddfile={(error, file) => this.handleAddFile(error, file)}
-                                    oninit={() => this.handleInit()}
+                                    labelIdle = {this.uploadUIlabel}
+                                    iconUndo = {this.iconCancel}
+                                    labelButtonUndoItemProcessing = {'Cancel'}
+                                    instantUpload = {true}
+                                    onaddfile = {(error, file) => this.handleAddFile(error, file)}
+                                    oninit = {() => this.handleInit()}
                             ></FilePond>
 
                         : '' }
 
-                        { (this.state.files.length > 0) && !this.state.showListFile ?
+                        { (this.state.files.length > 0) && !this.state.showListFile && this.state.finishUpload ?
 
                             <GetQRCodeBtn handleClick={this.toggleShowListFile} login={this.state.login} files={this.state.files} countAddFile={this.state.countAddFile}/>
                         
@@ -161,19 +166,6 @@ export default class Home extends Component{
 
                     </div>
                 </div>
-
-                { this.state.showListFile ?
-
-                    <div>
-                        <div className="text-center">
-                            <button className="btn btn-success mb-3 w-50" onClick={() => this.uploadNewFile()}><FontAwesomeIcon icon={["fas", "plus-circle"]} /> Upload New File</button>
-                        </div>
-                        <ListFile files={this.state.files} setting={{
-                                removeAllBtn: true,
-                            }}/>
-                    </div>
-
-                : ''}
 
             </div>
         )

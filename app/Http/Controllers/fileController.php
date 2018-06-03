@@ -116,7 +116,9 @@ class fileController extends Controller
             }
         }
 
-        Storage::deleteDirectory($temp_folder_name);
+        if(Storage::exists($temp_folder_name)){
+            Storage::deleteDirectory($temp_folder_name);
+        }
 
         return json_encode($files);
 
@@ -301,6 +303,8 @@ class fileController extends Controller
         $oldFileDetail = FileModel::where('fileId', $oldFile_id)->first();
         $oldFileName = $oldFileDetail->nameId . '.' . $oldFileDetail->fileExtension;                    
         $oldFilePath = $public_folder_name . '/' . $oldFileName;
+
+        if(!Storage::exists($oldFilePath)) return abort('404');
         
         try {
                        
@@ -332,7 +336,7 @@ class fileController extends Controller
             }
 
         } catch (DecryptException $e) {
-            return abort('404');
+            return abort('500');
         } 
 
         
@@ -363,9 +367,13 @@ class fileController extends Controller
 
                     FileModel::where('fileId', $file_id)->delete();
 
-                    Storage::move($public_path, $trash_path);
-
-                    return response()->json(['file_id' => $file_id]);
+                    if(!Storage::exists($public_path)){
+                        return response()->json(['error' => 'file not exists']);                           
+                    }
+                    else{
+                        Storage::move($public_path, $trash_path);
+                        return response()->json(['fileId' => $file_id]);   
+                    }
                 }
     
             } catch (DecryptException $e) {
