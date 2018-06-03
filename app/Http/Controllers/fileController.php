@@ -363,9 +363,13 @@ class fileController extends Controller
 
                     FileModel::where('fileId', $file_id)->delete();
 
-                    Storage::move($public_path, $trash_path);
-
-                    return response()->json(['file_id' => $file_id]);
+                    if(!Storage::exists($public_path)){
+                        return response()->json(['error' => 'file not exists']);                           
+                    }
+                    else{
+                        Storage::move($public_path, $trash_path);
+                        return response()->json(['fileId' => $file_id]);   
+                    }
                 }
     
             } catch (DecryptException $e) {

@@ -70,6 +70,32 @@ export default class ListFile extends Component {
 
     }
 
+    removeFileAPI(id, row, callback){
+        console.log(row)
+        axios.post('api/file/delete', {id, login: this.state.login}).then((response) => {
+            if(response.status === 200 && response.data.fileId !== undefined){
+                // Why can't use this.state.files ??????
+                let files = this.props.files;
+                let delId = response.data.fileId;
+                files = (files[0].id == undefined) ? files.filter((el) => (el.fileId != delId)) : files.filter((el) => (el.id != delId));
+
+                // Why can't use update state.files ??????
+                // this.setState({files});
+                //use oTable.row to remove row instead setFiles
+                this.oTable.row(row).remove().draw();
+                //this.props.setFiles(files);
+                callback()
+            }          
+        }).catch(function (error) {
+            console.log(error)
+            Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error').then((r) => {
+                if(r){
+                    location.reload();
+                }
+            });
+        });
+    }
+
     removeFile (id, e) {
         let row = $(e.target).parents('tr')
         Swal({
@@ -82,31 +108,12 @@ export default class ListFile extends Component {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.value) {
-                let login = this.state.login;
-                axios.post('api/file/delete', {id, login}).then((response) => {
-                    if(response.status === 200){
-                        // Why can't use this.state.files ??????
-                        let files = this.props.files;
-                        files = (files[0].id == undefined) ? files.filter((el) => (el.fileId != id)) : files.filter((el) => (el.id != id));
-
-                        // Why can't use update state.files ??????
-                        // this.setState({files});
-                        //use oTable.row to remove row instead setFiles
-                        this.oTable.row(row).remove().draw();
-                        //this.props.setFiles(files);
-                        Swal(
-                            'Deleted!',
-                            'Your file has been deleted.',
-                            'success'
-                        )
-                    }          
-                }).catch(function (error) {
-                    console.log(error)
-                    Swal('ไม่สามารถลบรูปได้', 'กรุณาติดต่อผู้ดูแลระบบได้ที่เบอร์ 78452', 'error').then((r) => {
-                        if(r){
-                            location.reload();
-                        }
-                    });
+                this.removeFileAPI(id, row, () => {
+                    Swal(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    );
                 });
             }
         })
@@ -124,8 +131,14 @@ export default class ListFile extends Component {
         }).then((result) => {
             if (result.value) {
 				for(let index in ids){
-					let login = this.state.login;
-					axios.post('api/file/delete', {id : ids[index], login}).then((response) => {
+                    this.removeFileAPI(ids[index], rows[index], () => {
+                        Swal(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        );
+                    });
+					/*axios.post('api/file/delete', {id : ids[index], login}).then((response) => {
 					    if(response.status === 200){
 							let files = this.props.files;
 							files = files.filter((el) => (
@@ -140,7 +153,7 @@ export default class ListFile extends Component {
                                 location.reload();
                             }
                         });
-					});
+					});*/
 				}
 
                 $("input[name=chkBoxAllFile]:checked").prop('checked', false);
