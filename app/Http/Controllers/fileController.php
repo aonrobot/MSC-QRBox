@@ -103,7 +103,7 @@ class fileController extends Controller
             $f->fileExtension = $file['fileExtension'];
             //$f->mimeType = $mimeType; 
             $f->fileSize = $file['fileSize'];
-            $f->fileLastModified = (string) $file['fileLastModified'];
+            $f->fileLastModified = (string) isset($file['fileLastModified']) ? $file['fileLastModified'] : ""; // MS Edge Can't read fileLastModified
             $f->isShare = 0;
             $f->shareId = $shareId;
             $f->shareLink = $shareLink;
